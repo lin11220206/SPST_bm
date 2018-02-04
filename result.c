@@ -32,7 +32,7 @@ void level1_duplication(char s){
         }
     }
 
-
+    int max = 0;
     int total = 0;
     int l1_dis[20] = {0};
     for(i=0; i<num_entry; i++){
@@ -40,10 +40,16 @@ void level1_duplication(char s){
 
         l1_dis[log_2(l1_count[i])]++;
         total++;
+
+        if(l1_count[i] > max) max = l1_count[i];
     }
     printf("%d\n", total);
-    for(i=0; i<20; i++)
+    for(i=0; i<17; i++)
         printf("%d\n", l1_dis[i]);
+
+    printf("%d\n", max);
+
+    printf("\n==================================\n");
     //printf("l1 level1_duplication\n");
     /*
     int seg1, seg2;
@@ -81,7 +87,6 @@ void level2_duplication(char s){
     for(i=0; i<3; i++){
         for(na=0; na<65536; na++){
             N = gp[i][na].n;
-
             for(j=1; j<N; j++){
                 for(k=1; k<gp[i][na].lv2[j].n; k++){
                     if(gp[i][na].lv2[j].b_type[k] != 1) continue;
@@ -95,6 +100,7 @@ void level2_duplication(char s){
         }
     }
 
+    int max = 0;
     int total = 0;
     int l2_dis[20] = {0};
     for(i=0; i<num_entry; i++){
@@ -102,11 +108,16 @@ void level2_duplication(char s){
 
         l2_dis[log_2(l2_count[i])]++;
         total++;
+
+        if(l2_count[i] > max) max = l2_count[i];
     }
     printf("%d\n", total);
-    for(i=0; i<20; i++)
+    for(i=0; i<17; i++)
         printf("%d\n", l2_dis[i]);
 
+    printf("%d\n", max);
+
+    printf("\n==================================\n");
     /*
     printf("===\n");
     for(i=0; i<num_entry; i++)

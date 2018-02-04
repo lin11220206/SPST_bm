@@ -387,6 +387,7 @@ void l2_bucket_share() {
     for(i=0; i<3; i++){
         for(na=0; na<65536; na++){
             N = gp[i][na].n;
+            printf("%d\n", na);
             for(j=1; j<N; j++){
                 for(k=0; k<gp[i][na].lv2[j].n; k++){
                     now = gp[i][na].lv2[j].b[k];

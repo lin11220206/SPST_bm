@@ -78,6 +78,15 @@ static void read_table(char *str, int n) {
         table[n].srclen = table[n].dstlen;
         table[n].dstlen = len;
     }
+    /*
+    if(table[n].group == 2){
+        ip = table[n].srcIP;
+        table[n].srcIP  = table[n].dstIP;
+        table[n].dstIP  = ip;
+        len             = table[n].srclen;
+        table[n].srclen = table[n].dstlen;
+        table[n].dstlen = len;
+    }*/
 }
 
 void set_table(char *file_name) {
