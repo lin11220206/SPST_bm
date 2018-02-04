@@ -42,7 +42,7 @@ void groupping() {
 }
 
 void first_level() {
-    int i, j, g, N, na;
+    int i, j, g, N, na, k;
 
     char s[] = "start computing first level ...";
     //printf("%-40s", s);
@@ -134,10 +134,17 @@ void first_level() {
                     gp[i][na].lv2[j].endpoint = (unsigned int *) malloc ((gp[i][na].n1[j] * 2 + 1) * sizeof(unsigned int));
                     //level 2 root所擁有的endpoints數, 最多為2n+1個, n為這個root所cover的rule subset
                     gp[i][na].lv2[j].n2       = (int *) malloc ((gp[i][na].n1[j] * 2 + 1) * sizeof(int));
-                    gp[i][na].lv2[j].b        = (struct bucket *) malloc ((gp[i][na].n1[j] * 2 + 1) * sizeof(struct bucket)); //child => bucket
+                    gp[i][na].lv2[j].b        = (struct bucket **) malloc ((gp[i][na].n1[j] * 2 + 1) * sizeof(struct bucket *)); //child => bucket
+                    gp[i][na].lv2[j].b_type   = (unsigned int *) malloc ((gp[i][na].n1[j] * 2 + 1) * sizeof(unsigned int));
+                    gp[i][na].lv2[j].type     = 1;
                     gp[i][na].lv2[j].n        = 1;
                     gp[i][na].lv2[j].rule     = (int *) calloc ((gp[i][na].n1[j] * 2 + 1) ,sizeof(int)); //child
                     gp[i][na].lv2[j].r        = 0; // bucket size
+
+                    for(k=0; k< (gp[i][na].n1[j] * 2 + 1); k++){
+                        gp[i][na].lv2[j].b[k] = (struct bucket *)malloc(sizeof(struct bucket));
+                        gp[i][na].lv2[j].b_type[k] = 1;
+                    }
                 }
             }
         }
@@ -206,12 +213,12 @@ void second_level() {
             }
             for(j = 1; j < N; j++){
                 for(k=1; k<gp[i][na].lv2[j].n; k++){
-                    gp[i][na].lv2[j].b[k].rule  = (int *) malloc (thres2[i] * sizeof(int)); //bucket
-                    gp[i][na].lv2[j].b[k].rule2 = (int *) malloc (thres2[i] * sizeof(int)); //bucket 2
-                    gp[i][na].lv2[j].b[k].set   = 0;
-                    gp[i][na].lv2[j].b[k].r     = 0;
-                    gp[i][na].lv2[j].b[k].r2    = 0;
-                    gp[i][na].lv2[j].b[k].BV    = 0;
+                    gp[i][na].lv2[j].b[k]->rule  = (int *) malloc (thres2[i] * sizeof(int)); //bucket
+                    gp[i][na].lv2[j].b[k]->rule2 = (int *) malloc (thres2[i] * sizeof(int)); //bucket 2
+                    gp[i][na].lv2[j].b[k]->set   = 0;
+                    gp[i][na].lv2[j].b[k]->r     = 0;
+                    gp[i][na].lv2[j].b[k]->r2    = 0;
+                    gp[i][na].lv2[j].b[k]->BV    = 0;
                 }
             }
 
@@ -328,12 +335,92 @@ void convert() {
 
     printf("finish\n");
 }*/
-void bucket_share() {
+void l1_bucket_share() {
 
+    int i, j, k, na;
+    int N, ruleID;
+
+    int *uni[500000];
+    int uni_l[500000] = {0};
+    int uni_N = 0;
+
+    int *now;
+    int l;
+    for(i=0; i<3; i++){
+        for(na=0; na<65536; na++){
+            N = gp[i][na].n;
+            for(j=1; j<N; j++){
+                if(gp[i][na].lv2[j].r == 0) continue;
+
+                now = gp[i][na].lv2[j].rule;
+                l = gp[i][na].lv2[j].r;
+                for(k=0; k<uni_N; k++){
+                    if(l != uni_l[k]) continue;
+                    
+                    if(rule_check_exact(now, uni[k], l, l)){
+                        free(gp[i][na].lv2[j].rule);
+                        gp[i][na].lv2[j].rule = uni[k];
+                        gp[i][na].lv2[j].type = 0;
+                        break;
+                    }
+                }
+                if(k==uni_N) {
+                    uni[uni_N] = now;
+                    uni_l[uni_N++] = l;
+                    gp[i][na].lv2[j].type = 1;
+                }
+            }
+        }
+    }
+
+    return;
 }
+void l2_bucket_share() {
+    printf("start bucket_share\n");
+    int i, j, k, l, na;
+    int N, ruleID;
+
+    struct bucket *uni[500000];
+    int uni_N = 0;
+
+    struct bucket *now;
+    for(i=0; i<3; i++){
+        for(na=0; na<65536; na++){
+            N = gp[i][na].n;
+            for(j=1; j<N; j++){
+                for(k=0; k<gp[i][na].lv2[j].n; k++){
+                    now = gp[i][na].lv2[j].b[k];
+                    if(now->r == 0) continue;
+                    for(l=0; l<uni_N; l++){
+                        if(now->r != uni[l]->r ) continue;
+                        
+                        if(rule_check_exact(now->rule, uni[l]->rule, now->r, now->r)){
+                            free(gp[i][na].lv2[j].b[k]);
+                            gp[i][na].lv2[j].b[k] = uni[l];
+                            gp[i][na].lv2[j].b_type[k] = 0;
+                            break;
+                        }
+                    }
+                    if(l==uni_N) {
+                        uni[uni_N++] = now;
+                        gp[i][na].lv2[j].b_type[k] = 1;
+                    }
+                }
+            }
+        }
+    }
+    printf("finist bucket share\n");
+    /*printf("uni_bucket num: %d\n", uni_N);
+    for(i=0; i<uni_N; i++){
+        for(j=0; j<uni[i]->r; j++){
+            printf("%d ", uni[i]->rule[j]+1);
+        }
+        printf("\n");
+    }*/
+}/*
 void bucket_merge() {
     
-}
+}/*
 /*
 void software_compress() {
     int i, j, k, l, m, T, *pn, *rn, nor1, nor2, N; // nor = num of rule

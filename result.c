@@ -22,6 +22,7 @@ void level1_duplication(char s){
             N = gp[i][na].n;
 
             for(j=1; j<N; j++){
+                if(gp[i][na].lv2[j].type != 1) continue;
                 for(k=0; k<gp[i][na].lv2[j].r; k++){
                     ruleID = gp[i][na].lv2[j].rule[k];
 
@@ -83,8 +84,9 @@ void level2_duplication(char s){
 
             for(j=1; j<N; j++){
                 for(k=1; k<gp[i][na].lv2[j].n; k++){
-                    for(r=0; r<gp[i][na].lv2[j].b[k].r; r++){
-                        ruleID = gp[i][na].lv2[j].b[k].rule[r];
+                    if(gp[i][na].lv2[j].b_type[k] != 1) continue;
+                    for(r=0; r<gp[i][na].lv2[j].b[k]->r; r++){
+                        ruleID = gp[i][na].lv2[j].b[k]->rule[r];
 
                         l2_count[ruleID]++;
                     }
@@ -104,6 +106,11 @@ void level2_duplication(char s){
     printf("%d\n", total);
     for(i=0; i<20; i++)
         printf("%d\n", l2_dis[i]);
+
+    /*
+    printf("===\n");
+    for(i=0; i<num_entry; i++)
+        printf("%d\n", l2_count[i]);*/
     //printf("level2_duplication\n");
     /*
     int seg1, seg2;

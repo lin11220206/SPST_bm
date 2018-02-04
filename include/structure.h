@@ -12,7 +12,9 @@ struct level1 {
 
 struct level2 {
     unsigned int *endpoint;
-    struct bucket *b;
+    struct bucket **b;
+    int type;
+    int *b_type;
     int n, *n2, *rule, r; // n2 = number of each interval
 };
 
@@ -30,6 +32,7 @@ void groupping();
 void first_level();
 void second_level();
 void convert();
-void bucket_share();
+void l1_bucket_share();
+void l2_bucket_share();
 void buekct_merge();
 //void software_compress();

@@ -60,7 +60,7 @@ void interval_operation(int op, int ID, unsigned int ip1, int len1, int ip2, int
                 lv2[i].rule[lv2[i].r++] = ID; // 這裡將rule放進第一層對應的child裡面
                 add_endpoint(lv2[i].endpoint, &(lv2[i].n), l2, r2); // 將Dst l, r放進對應的child endpoints 裡面
             }
-            if (op == 3) lv2[n].b[i].rule[lv2[n].b[i].r++] = ID;
+            if (op == 3) lv2[n].b[i]->rule[lv2[n].b[i]->r++] = ID;
         }
 
         if (c == 1 && endpoint[i] >= r1) break;
