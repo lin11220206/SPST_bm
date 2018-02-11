@@ -8,6 +8,7 @@
 
 int *l1_count;
 int *l2_count;
+int *merge_count;
 
 void level1_duplication(char s){
     int i, na, j, k;
@@ -148,3 +149,36 @@ void level2_duplication(char s){
     }
     */
 }
+void merge_duplication(char s){
+    int i, j;
+    merge_count = malloc(num_entry * sizeof(int));
+
+    for(i=0; i<num_entry; i++)
+        merge_count[i] = 0;
+
+    for(i=0; i<mrg_num; i++){
+        for(j=0; j<merge_bucket[i]->r; j++){
+            merge_count[merge_bucket[i]->rule[j]]++;
+        }
+    }
+
+    int max = 0;
+    int total = 0;
+    int merge_dis[20] = {0};
+    for(i=0; i<num_entry; i++){
+        if(table[i].group != (s-'B')) continue;
+
+        j = merge_count[i];
+        merge_dis[log_2(j)]++;
+        total++;
+
+        if(j > max) max = j;
+    }
+    printf("%d\n", total);
+    for(i=0; i<17; i++)
+        printf("%d\n", merge_dis[i]);
+
+    printf("%d\n", max);
+
+    printf("\n==================================\n");
+}  

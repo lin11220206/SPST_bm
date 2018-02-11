@@ -135,3 +135,33 @@ int rule_check_cover(int *b1, int *b2, int r1, int r2) { //check if bucket b2 co
     }
     return 1;
 }
+int rule_check_merge(int *b1, int *b2, int r1, int r2, int max_size) {
+    int i, j, sum;
+    sum = r1+r2;
+    for(i=0; i<r1; i++){
+        for(j=0; j<r2; j++){
+            if(b1[i] == b2[j]) {
+                sum--;
+                break;
+            }
+        }
+    }
+    if( sum <= max_size) { //merge two bucket
+        for(i=0; i<r1; i++){
+            for(j=0; j<r2; j++){
+                if(b1[i] == b2[j]) break;
+            }
+            if(j==r2) {
+                b2[r2++] = b1[i];
+            }
+        }
+        qsort(b2, r2, sizeof(int), cmp_r);
+
+        return r2;
+    }
+    return 0;
+}
+
+int cmp_r(const void *a, const void *b){
+    return *(int *)a - *(int *)b;
+}

@@ -5,3 +5,5 @@ int  count_bit(int);
 int log_2(int);
 int rule_check_exact(int *, int *, int, int);
 int rule_check_cover(int *, int *, int, int);
+int rule_check_merge(int *, int *, int, int, int);
+int cmp_r(const void *, const void *);

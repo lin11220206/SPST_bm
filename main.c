@@ -12,12 +12,10 @@ int main(int argc, char *argv[]) {
     second_level();
     //l1_bucket_share();
     l2_bucket_share();
-    level2_duplication('B');
-    level2_duplication('C');
-    level2_duplication('D');
-    //level1_duplication('B');
-    //level1_duplication('C');
-    //level1_duplication('D');
+    bucket_merge();
+    merge_duplication('B');
+    merge_duplication('C');
+    merge_duplication('D');
     //level2_duplication(argv[2][0]);
     //convert();
     //software_compress();

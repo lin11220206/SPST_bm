@@ -7,7 +7,12 @@
 
 struct level1 gp[3][65536];
 int thres[3], thres2[3], thres3[4], count2[4], numcombine;
-int group[3][65536], pnp[4], rnr[4], groupp[3], num_bucket[4], uni_bucket[4];
+int group[3][65536], groupp[3];
+struct bucket *uni_bucket[500000];
+int uni_num = 0;
+struct bucket *merge_bucket[500000];
+int mrg_num = 0;
+
 // group: Group A~D, SrcIP 5-bit Seg後各root的rule數, groupp: 該組裡的rule數
 // max[i]: Group A~D中擁有最多rules的root
 //gp level 1 roots
@@ -380,30 +385,26 @@ void l2_bucket_share() {
     int i, j, k, l, na;
     int N, ruleID;
 
-    struct bucket *uni[500000];
-    int uni_N = 0;
-
     struct bucket *now;
     for(i=0; i<3; i++){
         for(na=0; na<65536; na++){
             N = gp[i][na].n;
-            printf("%d\n", na);
             for(j=1; j<N; j++){
                 for(k=0; k<gp[i][na].lv2[j].n; k++){
                     now = gp[i][na].lv2[j].b[k];
                     if(now->r == 0) continue;
-                    for(l=0; l<uni_N; l++){
-                        if(now->r != uni[l]->r ) continue;
+                    for(l=0; l<uni_num; l++){
+                        if(now->r != uni_bucket[l]->r ) continue;
                         
-                        if(rule_check_exact(now->rule, uni[l]->rule, now->r, now->r)){
+                        if(rule_check_exact(now->rule, uni_bucket[l]->rule, now->r, now->r)){
                             free(gp[i][na].lv2[j].b[k]);
-                            gp[i][na].lv2[j].b[k] = uni[l];
+                            gp[i][na].lv2[j].b[k] = uni_bucket[l];
                             gp[i][na].lv2[j].b_type[k] = 0;
                             break;
                         }
                     }
-                    if(l==uni_N) {
-                        uni[uni_N++] = now;
+                    if(l==uni_num) {
+                        uni_bucket[uni_num++] = now;
                         gp[i][na].lv2[j].b_type[k] = 1;
                     }
                 }
@@ -418,10 +419,49 @@ void l2_bucket_share() {
         }
         printf("\n");
     }*/
-}/*
+}
 void bucket_merge() {
-    
-}/*
+    printf("start bucket_merge\n");
+    qsort(uni_bucket, uni_num, sizeof(struct bucket *), cmp);
+
+    int i, j, k, l, na;
+    int N, ruleID;
+
+    struct bucket *now;
+    for(i=0; i<uni_num; i++){
+        now = uni_bucket[i];
+
+        for(j=0; j<mrg_num; j++){
+            if(table[now->rule[0]].group != table[merge_bucket[j]->rule[0]].group) continue;
+            int t = thres2[table[now->rule[0]].group];
+            int r = rule_check_merge(now->rule, merge_bucket[j]->rule, now->r, merge_bucket[j]->r, t);
+            if(r) {
+                merge_bucket[j]->r = r;
+                break;
+            }
+        }
+        if(j == mrg_num) {
+            merge_bucket[mrg_num++] = now;
+        }
+    }
+    /*
+    for(i=0; i<mrg_num; i++){
+        printf("bucket %d: ", i);
+        for(j=0; j<merge_bucket[i]->r; j++){
+            printf("%d ", merge_bucket[i]->rule[j]+1);
+        }
+        printf("\n");
+    }*/
+    printf("finish bucket_merge\n");
+}
+
+int cmp(const void *a, const void *b) {
+    struct bucket *aa, *bb;
+    aa = *(struct bucket **)a;
+    bb = *(struct bucket **)b;
+
+    return bb->r - aa->r;
+}
 /*
 void software_compress() {
     int i, j, k, l, m, T, *pn, *rn, nor1, nor2, N; // nor = num of rule

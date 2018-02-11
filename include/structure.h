@@ -25,7 +25,11 @@ struct bucket {
 
 extern struct level1 gp[3][65536];
 extern int thres[3], thres2[3], thres3[4], count2[4], numcombine;
-extern int group[3][65536], pnp[4], rnr[4], groupp[3], num_bucket[4], uni_bucket[4];
+extern int group[3][65536], groupp[3];
+extern struct bucket *uni_bucket[500000];
+extern int uni_num;
+extern struct bucket *merge_bucket[500000];
+extern int mrg_num;
 extern struct ENTRY3 *table3;
 
 void groupping();
@@ -35,4 +39,5 @@ void convert();
 void l1_bucket_share();
 void l2_bucket_share();
 void buekct_merge();
+int cmp(const void *, const void *);
 //void software_compress();
