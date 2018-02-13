@@ -1,6 +1,7 @@
 struct ENTRY3 {
     unsigned short int Port[4], type, n;
-    unsigned char proto;
+    unsigned char proto; 
+    int group;
 };
 
 struct level1 {

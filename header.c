@@ -87,6 +87,7 @@ static void read_table(char *str, int n) {
         table[n].srclen = table[n].dstlen;
         table[n].dstlen = len;
     }*/
+    table[n].rule = 0;
 }
 
 void set_table(char *file_name) {

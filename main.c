@@ -10,13 +10,20 @@ int main(int argc, char *argv[]) {
     groupping();
     first_level();
     second_level();
+    convert();
     //l1_bucket_share();
     l2_bucket_share();
+    //bucket_merge();
+    //merge_duplication('B');
+    //merge_duplication('C');
+    //merge_duplication('D');
+    //level2_duplication('B');
     bucket_merge();
     merge_duplication('B');
     merge_duplication('C');
     merge_duplication('D');
-    //level2_duplication(argv[2][0]);
+
+
     //convert();
     //software_compress();
     

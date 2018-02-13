@@ -1,4 +1,4 @@
-CC = gcc
+CC = clang
 CFLAGS = -g
 INC = -I include
 INC_PATH = include
