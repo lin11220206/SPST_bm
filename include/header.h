@@ -8,4 +8,5 @@ struct ENTRY {
 extern int num_entry;
 extern struct ENTRY *table;
 
+void read_table(char *, int);
 void set_table(char *);

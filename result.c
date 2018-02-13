@@ -8,7 +8,7 @@
 
 int *l1_count;
 int *l2_count;
-int merge_count[100000];
+int *merge_count;
 
 void level1_duplication(char s){
     int i, na, j, k;
@@ -177,7 +177,7 @@ void merge_duplication(char s){
     int i, j, ruleID;
     int N = numcombine;
     //printf("%d\n", N);
-    //merge_count = malloc(N * sizeof(int));
+    merge_count = malloc(N * sizeof(int));
 
     for(i=0; i<N; i++)
         merge_count[i] = 0;
@@ -227,7 +227,9 @@ void merge_duplication(char s){
 
     printf("%d\n", max);
 
-    printf("\n==================================\n");
+    printf("\n============================\n");
+    //char ss[] = "\n==================================\n";
+    //printf("%-40s", ss);
     /*
     for(i=0; i<mrg_num; i++){
         for(j=0; j<merge_bucket[i]->r; j++){
@@ -236,5 +238,7 @@ void merge_duplication(char s){
         printf("\n");
     }*/
 
-    //free(merge_count);
+    if(merge_count != 0)
+        free(merge_count);
+    //printf("test\n");
 }

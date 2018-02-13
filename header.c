@@ -6,7 +6,7 @@
 int num_entry;
 struct ENTRY *table;
 
-static void read_table(char *str, int n) {
+void read_table(char *str, int n) {
     int i = 2;
 	char tok[] = "./@ :\t\n";
 	char buf[100], *str1;
@@ -78,7 +78,7 @@ static void read_table(char *str, int n) {
         table[n].srclen = table[n].dstlen;
         table[n].dstlen = len;
     }
-    /*
+    
     if(table[n].group == 2){
         ip = table[n].srcIP;
         table[n].srcIP  = table[n].dstIP;
@@ -86,7 +86,7 @@ static void read_table(char *str, int n) {
         len             = table[n].srclen;
         table[n].srclen = table[n].dstlen;
         table[n].dstlen = len;
-    }*/
+    }
     table[n].rule = 0;
 }
 
@@ -107,4 +107,6 @@ void set_table(char *file_name) {
         table[num_entry].rule = num_entry + 1;
         read_table(string, num_entry++);
 	}
+    //if(fp != 0)
+        //free(fp);
 }

@@ -248,10 +248,10 @@ void convert() {
     int i, j, k, l, m, n = 0, N, nn;
     int ruleID;
 
-    char s[] = "start converting to new rule ID ...";
-    printf("%-40s", s);
+    //char s[] = "start converting to new rule ID ...";
+    //printf("%-40s", s);
 
-    table3 = (struct ENTRY3 *) malloc (2500 * sizeof(struct ENTRY3)); // 3-field sub-rules table
+    table3 = (struct ENTRY3 *) malloc (10000 * sizeof(struct ENTRY3)); // 3-field sub-rules table
 
     for (i = 0; i < num_entry; i++) {
 
@@ -319,7 +319,7 @@ void convert() {
         //printf("group %c bucket size: %-4d\n", m + 65, thres3[m]);
     }
 
-    printf("finish\n");
+    //printf("finish\n");
 }
 void l1_bucket_share() {
 
@@ -362,9 +362,11 @@ void l1_bucket_share() {
     return;
 }
 void l2_bucket_share() {
-    printf("start bucket_share\n");
+    //printf("start bucket_share\n");
     int i, j, k, l, na;
     int N, ruleID;
+
+    //uni_bucket = (struct bucket **) calloc(500000 , sizeof(struct bucket *));
 
     struct bucket *now;
     for(i=0; i<3; i++){
@@ -378,7 +380,7 @@ void l2_bucket_share() {
                         if(now->r != uni_bucket[l]->r ) continue;
                         
                         if(rule_check_exact(now->rule, uni_bucket[l]->rule, now->r, now->r)){
-                            free(gp[i][na].lv2[j].b[k]);
+                            //free(gp[i][na].lv2[j].b[k]);
                             gp[i][na].lv2[j].b[k] = uni_bucket[l];
                             gp[i][na].lv2[j].b_type[k] = 0;
                             break;
@@ -392,7 +394,7 @@ void l2_bucket_share() {
             }
         }
     }
-    printf("finist bucket share\n");
+    //printf("finist bucket share\n");
     /*printf("uni_bucket num: %d\n", uni_N);
     for(i=0; i<uni_N; i++){
         for(j=0; j<uni[i]->r; j++){
@@ -402,11 +404,18 @@ void l2_bucket_share() {
     }*/
 }
 void bucket_merge() {
-    printf("start bucket_merge\n");
-    qsort(uni_bucket, uni_num, sizeof(struct bucket *), cmp);
+    ///printf("start bucket_merge\n");
+    //qsort(uni_bucket, uni_num, sizeof(struct bucket *), cmp);
+    
 
     int i, j, k, l, na;
     int N, ruleID;
+    /*
+    for(i=0; i<150; i++){
+        printf("%d %p\n", i, uni_bucket[i]);
+    }*/
+    //sort();
+    qsort(uni_bucket, uni_num, sizeof(struct bucket *), cmp);
 
     struct bucket *now;
     for(i=0; i<uni_num; i++){
@@ -433,7 +442,7 @@ void bucket_merge() {
         }
         printf("\n");
     }*/
-    printf("finish bucket_merge\n");
+    //printf("finish bucket_merge\n");
 }
 
 int cmp(const void *a, const void *b) {
@@ -442,4 +451,22 @@ int cmp(const void *a, const void *b) {
     bb = *(struct bucket **)b;
 
     return bb->r - aa->r;
+}
+
+void sort() {
+    int i,j;
+
+    struct bucket *tmp;
+    for(i=0; i<uni_num-1; i++){
+        int max = i;
+        for(j=i+1; j<uni_num; j++){
+            if(uni_bucket[j] == 0 || uni_bucket[max] == 0) 
+                printf("fuck\n");
+            if(uni_bucket[j]->r > uni_bucket[max]->r)
+                max = j;
+        }
+        tmp = uni_bucket[max];
+        uni_bucket[max] = uni_bucket[j];
+        uni_bucket[j] = tmp;
+    }
 }
