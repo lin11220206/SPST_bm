@@ -5,3 +5,4 @@ extern int *merge_count;
 void level1_duplication(char);
 void level2_duplication(char);
 void merge_duplication(char);
+void result1(char);

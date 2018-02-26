@@ -242,3 +242,81 @@ void merge_duplication(char s){
         free(merge_count);
     //printf("test\n");
 }
+
+void result1(char s){
+    printf("group %c\n", s);
+    int sel = 0;
+
+    int i, j, k, l, m, n, na;
+    int N; 
+    int total = 0;
+    int l1_eleitv = 0;
+    int l2_eleitv = 0;
+    int ruleID;
+    if(sel){
+        for(i=0; i<numcombine; i++){
+            if(table3[i].group != (s-'B')) continue;
+            total++;
+        }
+        printf("total rules: %d\n", total);
+        
+        for(i=0; i<3; i++){
+            if(i != (s-'B')) continue;
+            for(na=0; na<65536; na++){
+                N = gp[i][na].n;
+                
+                if(N > 1)
+                    l1_eleitv += N - 1;
+
+                for(j=1; j<N; j++)
+                    l2_eleitv += gp[i][na].lv2[j].n - 1;
+
+                }
+        }
+        printf("# of level 1 elementary intervals: %d\n", l1_eleitv);
+        printf("# of level 2 elementary intervals: %d\n", l2_eleitv);
+        total = 0;
+        for(i=0; i<mrg_num; i++){
+            ruleID = merge_bucket[i]->rule[0];
+            if(table3[ruleID].group != (s-'B')) continue;
+
+            total++;
+        }
+        printf("# of distinct merge_bucket: %d\n", total);
+
+        printf("bucket size: %d\n", thres2[s-'B']);
+    }
+    else {
+        for(i=0; i<num_entry; i++){
+            if(table[i].group != (s-'B')) continue;
+            total++;
+        }
+        printf("total rules: %d\n", total);
+        
+        for(i=0; i<3; i++){
+            if(i != (s-'B')) continue;
+            for(na=0; na<65536; na++){
+                N = gp[i][na].n;
+                
+                l1_eleitv += (N - 1);
+
+                for(j=1; j<N; j++)
+                    l2_eleitv += (gp[i][na].lv2[j].n - 1);
+
+                }
+        }
+        printf("# of level 1 elementary intervals: %d\n", l1_eleitv);
+        printf("# of level 2 elementary intervals: %d\n", l2_eleitv);
+        total = 0;
+        for(i=0; i<mrg_num; i++){
+            ruleID = merge_bucket[i]->rule[0];
+            if(table[ruleID].group != (s-'B')) continue;
+
+            total++;
+        }
+        printf("# of distinct merge_bucket: %d\n", total);
+
+        printf("bucket size: %d\n", thres2[s-'B']);
+    }
+    printf("\n=========================================\n");
+}

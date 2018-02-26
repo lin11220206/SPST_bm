@@ -31,6 +31,9 @@ void groupping() {
         ip = table[i].srcIP;
         len = table[i].srclen;
 
+        group[table[i].group][0]++;
+        groupp[table[i].group]++;
+        /*
         if (len >= 16) {
             group[table[i].group][ip >> 16]++;
             groupp[table[i].group]++;
@@ -40,7 +43,7 @@ void groupping() {
                 group[table[i].group][(ip >> 16) + j]++;
                 groupp[table[i].group]++;
             }
-        }
+        }*/
     }
 
     //printf("finish\n");
@@ -72,7 +75,9 @@ void first_level() {
         ip = table[i].srcIP;
         len = table[i].srclen;
 
-
+        g = table[i].group;
+        gp[g][0].rule[gp[g][0].r++] = i;
+        /*
         if (len >= 16) {
             na = ip >> 16;
             gp[table[i].group][na].rule[gp[table[i].group][na].r++] = i;
@@ -82,7 +87,7 @@ void first_level() {
                 na = (ip>>16) + j;
                 gp[table[i].group][na].rule[gp[table[i].group][na].r++] = i;
             }
-        }
+        }*/
     }
     
     int ruleID;
@@ -404,7 +409,7 @@ void l2_bucket_share() {
     }*/
 }
 void bucket_merge() {
-    ///printf("start bucket_merge\n");
+    printf("start bucket_merge\n");
     //qsort(uni_bucket, uni_num, sizeof(struct bucket *), cmp);
     
 
@@ -422,8 +427,8 @@ void bucket_merge() {
         now = uni_bucket[i];
 
         for(j=0; j<mrg_num; j++){
-            if(table3[now->rule[0]].group != table3[merge_bucket[j]->rule[0]].group) continue;
-            int t = thres2[table3[now->rule[0]].group];
+            if(table[now->rule[0]].group != table[merge_bucket[j]->rule[0]].group) continue;
+            int t = thres2[table[now->rule[0]].group];
             int r = rule_check_merge(now->rule, merge_bucket[j]->rule, now->r, merge_bucket[j]->r, t);
             if(r) {
                 merge_bucket[j]->r = r;
