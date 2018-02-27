@@ -1,0 +1,24 @@
+group B
+total rules: 440
+# of level 1 elementary intervals: 22971
+# of level 2 elementary intervals: 14182
+# of distinct merge_bucket: 573
+bucket size: 5
+
+=========================================
+group C
+total rules: 378
+# of level 1 elementary intervals: 13503
+# of level 2 elementary intervals: 1666
+# of distinct merge_bucket: 19
+bucket size: 51
+
+=========================================
+group D
+total rules: 477
+# of level 1 elementary intervals: 147435
+# of level 2 elementary intervals: 529560
+# of distinct merge_bucket: 894
+bucket size: 4
+
+=========================================
