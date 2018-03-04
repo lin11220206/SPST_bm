@@ -35,47 +35,31 @@ void level1_duplication(char s){
 
     int max = 0;
     int total = 0;
+    double sum = 0;
+    double avg;
     int l1_dis[20] = {0};
     for(i=0; i<num_entry; i++){
-        if(table3[i].group != (s-'B')) continue;
+        if(table[i].group != (s-'B')) continue;
 
         l1_dis[log_2(l1_count[i])]++;
         total++;
 
+        sum += l1_count[i];
+
         if(l1_count[i] > max) max = l1_count[i];
     }
     printf("%d\n", total);
-    for(i=0; i<17; i++)
+    for(i=11; i<20; i++)
+        l1_dis[10]+=l1_dis[i];
+    
+    for(i=0; i<11; i++)
         printf("%d\n", l1_dis[i]);
 
+    avg = sum/total;
+    printf("%.2f\n", avg);
     printf("%d\n", max);
 
     printf("\n==================================\n");
-    //printf("l1 level1_duplication\n");
-    /*
-    int seg1, seg2;
-    unsigned int ip, len;
-    for(i=0; i<num_entry; i++){
-        if(table3[i].group == 4) continue;
-
-        ip = table3[i].srcIP;
-        len = table3[i].srclen;
-
-        if(len >= 16){
-            seg1 = ip >> 16;
-            seg2 = seg1;
-        }
-        else{
-            seg1 = ip >> 16;
-            seg2 = seg1 + 1 << (16-len);
-            seg2--;
-        }
-
-        //printf("rule %d: group %c, seg %d - %d     ", i+1, table3[i].group+'B', seg1, seg2);
-        //printf("duplicated %d times\n", l1_count[i]);
-        printf("%d\n", l1_count[i]);
-    }*/
-
 }
 void level2_duplication(char s){
     int i, na, j, k, r;
@@ -245,7 +229,7 @@ void merge_duplication(char s){
 
 void result1(char s){
     printf("group %c\n", s);
-    int sel = 0;
+    int sel = 1;
 
     int i, j, k, l, m, n, na;
     int N; 
