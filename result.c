@@ -304,3 +304,33 @@ void result1(char s){
     }
     printf("\n=========================================\n");
 }
+
+void result2(char s){
+    int total = 0;
+    double sum = 0;
+    double avg;
+
+    int i, j, k, na;
+    int N;
+
+    for(i=0; i<3; i++){
+        if( i != (s-'B')) continue;
+        for(na=0; na<65536; na++){
+            N = gp[i][na].n;
+
+            for(j=1; j<N; j++){
+                total++;
+                if(gp[i][na].lv2[j].n > 0)
+                    sum += gp[i][na].lv2[j].n - 1;
+
+                //printf("%d\n", gp[i][na].lv2[j].n);
+            }
+        }
+    }
+    avg = sum/total;
+    //printf("%f %d\n", sum, total);
+    if(total != 0)
+        printf("%.2f\n", avg);
+    else 
+        printf("0\n");
+}
