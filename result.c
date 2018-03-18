@@ -18,7 +18,7 @@ void level1_duplication(int s) {
         l1_count[i] = 0;
 
     int ruleID, N;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 6; i++) {
         for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
 
@@ -55,7 +55,7 @@ void level1_duplication(int s) {
     if(s == 3) printf("group B-\n");
     if(s == 4) printf("group C-\n");
     if(s == 5) printf("group D-16\n");
-    
+
     printf("%d\n", total);
     for (i = 11; i < 20; i++)
         l1_dis[10] += l1_dis[i];
@@ -82,7 +82,7 @@ void level2_duplication(int s) {
 
     int ruleID, N;
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 6; i++) {
         for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
             for (j = 1; j < N; j++) {
