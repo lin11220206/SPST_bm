@@ -24,9 +24,9 @@ struct bucket {
     unsigned int BV;
 };
 
-extern struct level1 gp[3][65536];
-extern int thres[3], thres2[3], thres3[4], count2[4], numcombine;
-extern int group[3][65536], groupp[3];
+extern struct level1 gp[6][65536];
+extern int thres[6], thres2[6], thres3[4], count2[4], numcombine;
+extern int group[6][65536], groupp[6];
 extern struct bucket *uni_bucket[500000];
 extern int uni_num;
 extern struct bucket *merge_bucket[500000];

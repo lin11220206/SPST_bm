@@ -45,7 +45,7 @@ void read_table(char *str, int n) {
     }
 
     if(table[n].srclen < 5 && table[n].dstlen < 5)
-        table[n].group = 4;
+        table[n].group = -1;
     else if(table[n].srclen >= 5 && table[n].dstlen < 5)
         table[n].group = 0;
     else if(table[n].srclen < 5 && table[n].dstlen >= 5)
@@ -78,7 +78,7 @@ void read_table(char *str, int n) {
         table[n].srclen = table[n].dstlen;
         table[n].dstlen = len;
     }
-    
+    /*
     if(table[n].group == 2){
         ip = table[n].srcIP;
         table[n].srcIP  = table[n].dstIP;
@@ -86,8 +86,23 @@ void read_table(char *str, int n) {
         len             = table[n].srclen;
         table[n].srclen = table[n].dstlen;
         table[n].dstlen = len;
-    }
+    }*/
     table[n].rule = 0;
+
+    switch(table[n].group) {
+        case 0:
+
+            break;
+        case 1:
+
+            break;
+        case 2:
+            if(table[n].srclen < 16)
+                table[n].group = 5; //group D-16
+            break;
+        default:
+            break;
+    }   
 }
 
 void set_table(char *file_name) {

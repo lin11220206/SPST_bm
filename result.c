@@ -10,21 +10,21 @@ int *l1_count;
 int *l2_count;
 int *merge_count;
 
-void level1_duplication(char s){
+void level1_duplication(int s) {
     int i, na, j, k;
     l1_count = calloc(num_entry , sizeof(int));
-    
-    for(i=0; i<num_entry; i++)
+
+    for (i = 0; i < num_entry; i++)
         l1_count[i] = 0;
 
     int ruleID, N;
-    for(i=0; i<3; i++){
-        for(na=0; na<65536; na++){
+    for (i = 0; i < 3; i++) {
+        for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
 
-            for(j=1; j<N; j++){
-                if(gp[i][na].lv2[j].type != 1) continue;
-                for(k=0; k<gp[i][na].lv2[j].r; k++){
+            for (j = 1; j < N; j++) {
+                if (gp[i][na].lv2[j].type != 1) continue;
+                for (k = 0; k < gp[i][na].lv2[j].r; k++) {
                     ruleID = gp[i][na].lv2[j].rule[k];
 
                     l1_count[ruleID]++;
@@ -38,68 +38,57 @@ void level1_duplication(char s){
     double sum = 0;
     double avg;
     int l1_dis[20] = {0};
-    for(i=0; i<num_entry; i++){
-        if(table[i].group != (s-'B')) continue;
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group != s) continue;
 
         l1_dis[log_2(l1_count[i])]++;
         total++;
 
         sum += l1_count[i];
 
-        if(l1_count[i] > max) max = l1_count[i];
+        if (l1_count[i] > max) max = l1_count[i];
     }
-    printf("%d\n", total);
-    for(i=11; i<20; i++)
-        l1_dis[10]+=l1_dis[i];
+
+    if(s == 0) printf("group B\n");
+    if(s == 1) printf("group C\n");
+    if(s == 2) printf("group D\n");
+    if(s == 3) printf("group B-\n");
+    if(s == 4) printf("group C-\n");
+    if(s == 5) printf("group D-16\n");
     
-    for(i=0; i<11; i++)
+    printf("%d\n", total);
+    for (i = 11; i < 20; i++)
+        l1_dis[10] += l1_dis[i];
+
+    for (i = 0; i < 11; i++)
         printf("%d\n", l1_dis[i]);
 
-    avg = sum/total;
+    if(total == 0)
+        avg = 0;
+    else 
+        avg = sum / total;
     printf("%.2f\n", avg);
     printf("%d\n", max);
 
     printf("\n==================================\n");
 }
-void level2_duplication(char s){
+void level2_duplication(int s) {
     int i, na, j, k, r;
-    
-    int table_num = numcombine;
 
-    l2_count = calloc(table_num , sizeof(int));
+    l2_count = calloc(num_entry , sizeof(int));
 
-    for(i=0; i<table_num; i++)
+    for (i = 0; i < num_entry; i++)
         l2_count[i] = 0;
 
     int ruleID, N;
 
-    /*printf("thresh: %d\n", thres2[s-'B']);
-    N = 0;
-    for(i=0; i<uni_num; i++){
-        ruleID = uni_bucket[i]->rule[0];
-        if(table3[ruleID].group != s-'B') continue;
-        printf("uni_bucket: %d\n", i);
-
-        if(uni_bucket[i]->r > N) N = uni_bucket[i]->r;
-
-        for(j=0; j<uni_bucket[i]->r; j++){
-            ruleID = uni_bucket[i]->rule[j];
-
-            if(table3[ruleID].group != s-'B') continue;
-
-            printf("%d ", ruleID+1);
-        }
-        printf("\n");
-    }
-    printf("max: %d\n", N);*/
-
-    for(i=0; i<3; i++){
-        for(na=0; na<65536; na++){
+    for (i = 0; i < 3; i++) {
+        for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
-            for(j=1; j<N; j++){
-                for(k=1; k<gp[i][na].lv2[j].n; k++){
-                    if(gp[i][na].lv2[j].b_type[k] != 1) continue;
-                    for(r=0; r<gp[i][na].lv2[j].b[k]->r; r++){
+            for (j = 1; j < N; j++) {
+                for (k = 1; k < gp[i][na].lv2[j].n; k++) {
+                    if (gp[i][na].lv2[j].b_type[k] != 1) continue;
+                    for (r = 0; r < gp[i][na].lv2[j].b[k]->r; r++) {
                         ruleID = gp[i][na].lv2[j].b[k]->rule[r];
 
                         l2_count[ruleID]++;
@@ -111,72 +100,57 @@ void level2_duplication(char s){
 
     int max = 0;
     int total = 0;
+    double sum = 0;
+    double avg;
     int l2_dis[20] = {0};
-    for(i=0; i<table_num; i++){
-        if(table3[i].group != (s-'B')) continue;
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group != s) continue;
 
         l2_dis[log_2(l2_count[i])]++;
         total++;
 
-        if(l2_count[i] > max) max = l2_count[i];
+        sum+= l2_count[i];
+
+        if (l2_count[i] > max) max = l2_count[i];
     }
+
+    if(s == 0) printf("group B\n");
+    if(s == 1) printf("group C\n");
+    if(s == 2) printf("group D\n");
+    if(s == 3) printf("group B-\n");
+    if(s == 4) printf("group C-\n");
+    if(s == 5) printf("group D-16\n");
+
     printf("%d\n", total);
-    for(i=0; i<17; i++)
+    for(i=11; i<20; i++)
+        l2_dis[10] += l2_dis[i];
+
+    for (i = 0; i < 11; i++)
         printf("%d\n", l2_dis[i]);
 
+    if(total == 0)
+        avg = 0;
+    else 
+        avg = sum / total;
+    printf("%.2f\n", avg);
     printf("%d\n", max);
 
     printf("\n==================================\n");
-    /*
-    printf("===\n");
-    for(i=0; i<num_entry; i++)
-        printf("%d\n", l2_count[i]);*/
-    //printf("level2_duplication\n");
-    /*
-    int seg1, seg2;
-    unsigned int ip, len;
-    for(i=0; i<num_entry; i++){
-        if(table3[i].group == 4) continue;
-
-        ip = table3[i].srcIP;
-        len = table3[i].srclen;
-
-        if(len >= 16){
-            seg1 = ip >> 16;
-            seg2 = seg1;
-        }
-        else{
-            seg1 = ip >> 16;
-            seg2 = seg1 + 1 << (16-len);
-            seg2--;
-        }
-
-        //rintf("rule %d: group %c, seg %d - %d     ", i+1, table3[i].group+'B', seg1, seg2);
-        //printf("duplicated %d times\n", l2_count[i]);
-        printf("%d\n", l2_count[i]);
-    }
-    */
 }
-void merge_duplication(char s){
+void merge_duplication(int s) {
     int i, j, ruleID;
-    int N = numcombine;
-    //printf("%d\n", N);
-    merge_count = malloc(N * sizeof(int));
 
-    for(i=0; i<N; i++)
+    merge_count = malloc(num_entry * sizeof(int));
+
+    for (i = 0; i < num_entry; i++)
         merge_count[i] = 0;
 
-    int sum = 0;
-    for(i=0; i<mrg_num; i++){
+    for (i = 0; i < mrg_num; i++) {
         ruleID = merge_bucket[i]->rule[0];
-        //if(table3[ruleID].group != (s-'B')) continue;
-        //printf("bucket: %d\n", i);
-        for(j=0; j<merge_bucket[i]->r; j++){
-            //printf("%d %d\n", i, j);
-            //ruleID = merge_bucket[i]->rule[j];
-            if(table3[ruleID].group != (s-'B')) continue;
+        if(table[ruleID].group != s) continue;
 
-            //printf("%d ", ruleID+1);
+        for (j = 0; j < merge_bucket[i]->r; j++) {
+
             merge_count[merge_bucket[i]->rule[j]]++;
         }
         //printf("\n");
@@ -184,153 +158,194 @@ void merge_duplication(char s){
 
     int max = 0;
     int total = 0;
+    double sum = 0;
+    double avg;
     int merge_dis[20] = {0};
 
-    for(i=0; i<20; i++) merge_dis[i] = 0;
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group != s) continue;
 
-    for(i=0; i<N; i++){
-        if(table3[i].group != (s-'B')) continue;
-
+        merge_dis[log_2(merge_count[i])]++;
         total++;
+
+        sum+=merge_count[i];
+
+        if (merge_count[i] > max) max = merge_count[i];
     }
 
-    for(i=0; i<N; i++){
-        if(table3[i].group != (s-'B')) continue;
+    if(s == 0) printf("group B\n");
+    if(s == 1) printf("group C\n");
+    if(s == 2) printf("group D\n");
+    if(s == 3) printf("group B-\n");
+    if(s == 4) printf("group C-\n");
+    if(s == 5) printf("group D-16\n");
 
-        j = merge_count[i];
-        if(log_2(j)>=0) {
-            merge_dis[log_2(j)]++;
-        }
-        //total++;
-
-        if(j > max) max = j;
-    }
     printf("%d\n", total);
-    for(i=0; i<20; i++)
+    for(i=11; i<20; i++)
+        merge_dis[10]+=merge_dis[i];
+
+    for (i = 0; i < 11; i++)
         printf("%d\n", merge_dis[i]);
 
+    if(total == 0)
+        avg = 0;
+    else 
+        avg = sum / total;
+    printf("%.2f\n", avg);
     printf("%d\n", max);
 
     printf("\n============================\n");
-    //char ss[] = "\n==================================\n";
-    //printf("%-40s", ss);
-    /*
-    for(i=0; i<mrg_num; i++){
-        for(j=0; j<merge_bucket[i]->r; j++){
-            printf("%d ", merge_bucket[i]->rule[j]);
-        }
-        printf("\n");
-    }*/
-
-    if(merge_count != 0)
-        free(merge_count);
-    //printf("test\n");
 }
 
-void result1(char s){
+void result1(char s) {
     printf("group %c\n", s);
     int sel = 1;
 
     int i, j, k, l, m, n, na;
-    int N; 
+    int N;
     int total = 0;
     int l1_eleitv = 0;
     int l2_eleitv = 0;
     int ruleID;
-    if(sel){
-        for(i=0; i<numcombine; i++){
-            if(table3[i].group != (s-'B')) continue;
+    if (sel) {
+        for (i = 0; i < numcombine; i++) {
+            if (table3[i].group != (s - 'B')) continue;
             total++;
         }
         printf("total rules: %d\n", total);
-        
-        for(i=0; i<3; i++){
-            if(i != (s-'B')) continue;
-            for(na=0; na<65536; na++){
+
+        for (i = 0; i < 3; i++) {
+            if (i != (s - 'B')) continue;
+            for (na = 0; na < 65536; na++) {
                 N = gp[i][na].n;
-                
-                if(N > 1)
+
+                if (N > 1)
                     l1_eleitv += N - 1;
 
-                for(j=1; j<N; j++)
+                for (j = 1; j < N; j++)
                     l2_eleitv += gp[i][na].lv2[j].n - 1;
 
-                }
+            }
         }
         printf("# of level 1 elementary intervals: %d\n", l1_eleitv);
         printf("# of level 2 elementary intervals: %d\n", l2_eleitv);
         total = 0;
-        for(i=0; i<mrg_num; i++){
+        for (i = 0; i < mrg_num; i++) {
             ruleID = merge_bucket[i]->rule[0];
-            if(table3[ruleID].group != (s-'B')) continue;
+            if (table3[ruleID].group != (s - 'B')) continue;
 
             total++;
         }
         printf("# of distinct merge_bucket: %d\n", total);
 
-        printf("bucket size: %d\n", thres2[s-'B']);
+        printf("bucket size: %d\n", thres2[s - 'B']);
     }
     else {
-        for(i=0; i<num_entry; i++){
-            if(table[i].group != (s-'B')) continue;
+        for (i = 0; i < num_entry; i++) {
+            if (table[i].group != (s - 'B')) continue;
             total++;
         }
         printf("total rules: %d\n", total);
-        
-        for(i=0; i<3; i++){
-            if(i != (s-'B')) continue;
-            for(na=0; na<65536; na++){
+
+        for (i = 0; i < 3; i++) {
+            if (i != (s - 'B')) continue;
+            for (na = 0; na < 65536; na++) {
                 N = gp[i][na].n;
-                
+
                 l1_eleitv += (N - 1);
 
-                for(j=1; j<N; j++)
+                for (j = 1; j < N; j++)
                     l2_eleitv += (gp[i][na].lv2[j].n - 1);
 
-                }
+            }
         }
         printf("# of level 1 elementary intervals: %d\n", l1_eleitv);
         printf("# of level 2 elementary intervals: %d\n", l2_eleitv);
         total = 0;
-        for(i=0; i<mrg_num; i++){
+        for (i = 0; i < mrg_num; i++) {
             ruleID = merge_bucket[i]->rule[0];
-            if(table[ruleID].group != (s-'B')) continue;
+            if (table[ruleID].group != (s - 'B')) continue;
 
             total++;
         }
         printf("# of distinct merge_bucket: %d\n", total);
 
-        printf("bucket size: %d\n", thres2[s-'B']);
+        printf("bucket size: %d\n", thres2[s - 'B']);
     }
     printf("\n=========================================\n");
 }
 
-void result2(char s){
+void result2(int g) {
+    int sum = 0;
     int total = 0;
-    double sum = 0;
-    double avg;
+    int total2 = 0;
+    int total3 = 0;
+    int total4 = 0;
+    int total5 = 0;
 
-    int i, j, k, na;
+    int i, j, k, na, ruleID;
     int N;
 
-    for(i=0; i<3; i++){
-        if( i != (s-'B')) continue;
-        for(na=0; na<65536; na++){
+    for (i = 0; i < 6; i++) {
+        if ( i != g) continue;
+        for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
 
-            for(j=1; j<N; j++){
-                total++;
-                if(gp[i][na].lv2[j].n > 0)
-                    sum += gp[i][na].lv2[j].n - 1;
+            for (j = 1; j < N; j++) {
+                if (gp[i][na].lv2[j].type == 1) total3++;
+                if (gp[i][na].lv2[j].n > 1) {
+                    total++;
+                    total2 += gp[i][na].lv2[j].n - 1;
+                }
 
                 //printf("%d\n", gp[i][na].lv2[j].n);
             }
         }
     }
-    avg = sum/total;
+    for(i=0; i<uni_num; i++){
+        ruleID = uni_bucket[i]->rule[0];
+        if( table[ruleID].group != g) continue;
+        total4++;
+    }
+    for (i = 0; i < mrg_num; i++) {
+        ruleID = merge_bucket[i]->rule[0];
+        if (table[ruleID].group != g) continue;
+
+        total5++;
+    }
+    for(i=0; i<num_entry; i++){
+        if(table[i].group != g) continue;
+        sum ++;
+    }
+
+    if(g == 0) printf("group B\n");
+    if(g == 1) printf("group C\n");
+    if(g == 2) printf("group D\n");
+    if(g == 3) printf("group B-\n");
+    if(g == 4) printf("group C-\n");
+    if(g == 5) printf("group D-16\n");
+
+    printf("%d\n", sum);
+    printf("%d\n", total);
+    printf("%d\n", total3);
+    printf("%d\n", total2);
+    printf("%d\n", total4);
+    printf("%d\n", total5);
+    printf("%d\n", thres2[g]);
+
+    printf("\n===================\n");
     //printf("%f %d\n", sum, total);
-    if(total != 0)
-        printf("%.2f\n", avg);
-    else 
-        printf("0\n");
+}
+void result3(){
+    int i;
+    int total = 0;
+    int total2 = 0;
+    for(i=0; i<num_entry; i++){
+        if(table[i].srclen < 16) total++;
+        if(table[i].dstlen < 16) total2++;
+    }
+
+    printf("%d\n", total);
+    printf("%d\n", total2);
+    return;
 }
