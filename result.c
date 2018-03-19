@@ -5,6 +5,7 @@
 #include "structure.h"
 #include "function.h"
 #include "result.h"
+#include "global.h"
 
 int *l1_count;
 int *l2_count;
@@ -49,12 +50,8 @@ void level1_duplication(int s) {
         if (l1_count[i] > max) max = l1_count[i];
     }
 
-    if(s == 0) printf("group B\n");
-    if(s == 1) printf("group C\n");
-    if(s == 2) printf("group D\n");
-    if(s == 3) printf("group B-\n");
-    if(s == 4) printf("group C-\n");
-    if(s == 5) printf("group D-16\n");
+    if(s < 3) printf("group %c(%d-bit)\n", s+'B', setting.bit1);
+    else printf("group %c'(%d-bit)\n", s-3+'B', setting.bit2);
 
     printf("%d\n", total);
     for (i = 11; i < 20; i++)
@@ -70,7 +67,7 @@ void level1_duplication(int s) {
     printf("%.2f\n", avg);
     printf("%d\n", max);
 
-    printf("\n==================================\n");
+    printf("\n\n");
 }
 void level2_duplication(int s) {
     int i, na, j, k, r;
@@ -114,12 +111,8 @@ void level2_duplication(int s) {
         if (l2_count[i] > max) max = l2_count[i];
     }
 
-    if(s == 0) printf("group B\n");
-    if(s == 1) printf("group C\n");
-    if(s == 2) printf("group D\n");
-    if(s == 3) printf("group B-\n");
-    if(s == 4) printf("group C-\n");
-    if(s == 5) printf("group D-16\n");
+    if(s < 3) printf("group %c(%d-bit)\n", s+'B', setting.bit1);
+    else printf("group %c'(%d-bit)\n", s-3+'B', setting.bit2);
 
     printf("%d\n", total);
     for(i=11; i<20; i++)
@@ -135,7 +128,7 @@ void level2_duplication(int s) {
     printf("%.2f\n", avg);
     printf("%d\n", max);
 
-    printf("\n==================================\n");
+    printf("\n\n");
 }
 void merge_duplication(int s) {
     int i, j, ruleID;
@@ -173,12 +166,8 @@ void merge_duplication(int s) {
         if (merge_count[i] > max) max = merge_count[i];
     }
 
-    if(s == 0) printf("group B\n");
-    if(s == 1) printf("group C\n");
-    if(s == 2) printf("group D\n");
-    if(s == 3) printf("group B-\n");
-    if(s == 4) printf("group C-\n");
-    if(s == 5) printf("group D-16\n");
+    if(s < 3) printf("group %c(%d-bit)\n", s+'B', setting.bit1);
+    else printf("group %c'(%d-bit)\n", s-3+'B', setting.bit2);
 
     printf("%d\n", total);
     for(i=11; i<20; i++)
@@ -194,7 +183,7 @@ void merge_duplication(int s) {
     printf("%.2f\n", avg);
     printf("%d\n", max);
 
-    printf("\n============================\n");
+    printf("\n\n");
 }
 
 void result1(char s) {
@@ -272,7 +261,7 @@ void result1(char s) {
 
         printf("bucket size: %d\n", thres2[s - 'B']);
     }
-    printf("\n=========================================\n");
+    printf("===================\n\n");
 }
 
 void result2(int g) {
@@ -318,12 +307,8 @@ void result2(int g) {
         sum ++;
     }
 
-    if(g == 0) printf("group B\n");
-    if(g == 1) printf("group C\n");
-    if(g == 2) printf("group D\n");
-    if(g == 3) printf("group B-\n");
-    if(g == 4) printf("group C-\n");
-    if(g == 5) printf("group D-16\n");
+    if(g < 3) printf("group %c(%d-bit)\n", g+'B', setting.bit1);
+    else printf("group %c'(%d-bit)\n", g-3+'B', setting.bit2);
 
     printf("%d\n", sum);
     printf("%d\n", total);
@@ -333,7 +318,7 @@ void result2(int g) {
     printf("%d\n", total5);
     printf("%d\n", thres2[g]);
 
-    printf("\n===================\n");
+    printf("\n\n");
     //printf("%f %d\n", sum, total);
 }
 void result3(){

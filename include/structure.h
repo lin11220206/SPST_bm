@@ -39,7 +39,7 @@ void second_level();
 void convert();
 void l1_bucket_share();
 void l2_bucket_share();
-void buekct_merge();
+void bucket_merge();
 int cmp(const void *, const void *);
 //void software_compress();
 void sort();

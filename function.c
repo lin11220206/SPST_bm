@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "structure.h"
 #include "function.h"
 

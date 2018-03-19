@@ -5,6 +5,7 @@
 #include "structure.h"
 #include "function.h"
 #include "clock.h"
+#include "global.h"
 
 struct level1 gp[6][65536];
 int thres[6], thres2[6], thres3[4], count2[4], numcombine;
@@ -20,18 +21,42 @@ int mrg_num = 0;
 struct ENTRY3 *table3;
 
 void groupping() {
-    int i, j, max[3] = {0};
+    int i, j, max[3] = {0}, segment;
     unsigned int ip, len;
 
     char s[] = "start groupping ...";
     //printf("%-40s", s);
 
     for (i = 0; i < num_entry; i++) { // count rule number of segmentation roots
-        if (table[i].group == -1) continue; //group A
+        //if (table[i].group != setting.group) continue; //don't need because similar code in header.c
 
         ip = table[i].srcIP;
         len = table[i].srclen;
 
+        if(len >= setting.bit1){ // use bit1-bit segmentation table
+            if(setting.bit1 == 0)
+                segment = 0;
+            else 
+                segment = ip >> 32 - setting.bit1;
+
+            group[table[i].group][segment]++;
+            groupp[table[i].group]++;
+        }
+        else{ // use bit2-bit segmentation table
+
+            if(len < setting.bit2) printf("warning!\n");
+
+            table[i].group += 3;
+            
+            if(setting.bit2 == 0)
+                segment = 0;
+            else 
+                segment = ip >> 32 - setting.bit2;
+
+            group[table[i].group][segment]++;
+            groupp[table[i].group]++;
+        }
+        /*
         if (table[i].group > 2) { //don't need segmentation table
             group[table[i].group][0]++;
             groupp[table[i].group]++;
@@ -41,23 +66,18 @@ void groupping() {
                 group[table[i].group][ip >> 16]++;
                 groupp[table[i].group]++;
             }
-            else {
+            else { // duplication
                 for (j = 0; j < (1 << 16 - len); j++) {
                     group[table[i].group][(ip >> 16) + j]++;
                     groupp[table[i].group]++;
                 }
             }
-        }
-        /*
-        group[table[i].group][0]++;
-        groupp[table[i].group]++;*/
+        }*/
     }
-
-    //printf("finish\n");
 }
 
 void first_level() {
-    int i, j, g, N, na, k;
+    int i, j, g, N, na, k, segment;
 
     char s[] = "start computing first level ...";
     //printf("%-40s", s);
@@ -77,11 +97,28 @@ void first_level() {
     int len;
 
     for (i = 0; i < num_entry; i++) {  //insert ruleID to there segmentation roots
-        if (table[i].group == -1) continue; //group A
+        //if (table[i].group != setting.group) continue; //don't need because similar code in header.c
 
         ip = table[i].srcIP;
         len = table[i].srclen;
 
+        if(len >= setting.bit1){ // use bit1-bit segmentation table
+            if(setting.bit1 == 0)
+                segment = 0;
+            else 
+                segment = ip >> 32 - setting.bit1;
+
+            gp[table[i].group][segment].rule[gp[table[i].group][segment].r++] = i;
+        }
+        else{ // use bit2-bit segmentation table
+            if(setting.bit2 == 0)
+                segment = 0;
+            else 
+                segment = ip >> 32 - setting.bit2;
+
+            gp[table[i].group][segment].rule[gp[table[i].group][segment].r++] = i;
+        }
+        /*
         if (table[i].group > 2) {
             gp[table[i].group][0].rule[gp[table[i].group][0].r++] = i;
         }
@@ -96,7 +133,7 @@ void first_level() {
                     gp[table[i].group][na].rule[gp[table[i].group][na].r++] = i;
                 }
             }
-        }
+        }*/
         //g = table[i].group;
         //gp[g][0].rule[gp[g][0].r++] = i;
 

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "header.h"
+#include "global.h"
 
 int num_entry;
 struct ENTRY *table;
@@ -78,18 +79,18 @@ void read_table(char *str, int n) {
         table[n].srclen = table[n].dstlen;
         table[n].dstlen = len;
     }
-    /*
-    if(table[n].group == 2){
+    
+    if(setting.change && table[n].group == 2){
         ip = table[n].srcIP;
         table[n].srcIP  = table[n].dstIP;
         table[n].dstIP  = ip;
         len             = table[n].srclen;
         table[n].srclen = table[n].dstlen;
         table[n].dstlen = len;
-    }*/
+    }
     table[n].rule = 0;
 
-    switch(table[n].group) {
+    /*switch(table[n].group) {
         case 0:
 
             break;
@@ -102,7 +103,7 @@ void read_table(char *str, int n) {
             break;
         default:
             break;
-    }   
+    }   */
 }
 
 void set_table(char *file_name) {
@@ -121,6 +122,7 @@ void set_table(char *file_name) {
 	while(fgets(string, 100, fp) != NULL) {
         table[num_entry].rule = num_entry + 1;
         read_table(string, num_entry++);
+        if(table[num_entry-1].group != setting.group) num_entry--;
 	}
     //if(fp != 0)
         //free(fp);
