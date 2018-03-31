@@ -12,8 +12,12 @@ void set(char **arg){
 	else setting.group = -1;
 
 	setting.change = atoi(arg[3]);
+	setting.cut = 16;
+	//setting.cut = atoi(arg[4]);
 	setting.bit1 = atoi(arg[4]);
 	setting.bit2 = atoi(arg[5]);
+	setting.newID = atoi(arg[6]);
+	setting.rebuild = 0;
 }
 
 void print_setting(){
@@ -26,6 +30,11 @@ void print_setting(){
 
 	printf("select group: %c\n", group);
 	printf("change: %c\n", (setting.change)? 'Y': 'N');
-	printf("group %c use %d-bit segmentation table\n", group, setting.bit1);
-	printf("group %c' use %d-bit segmentation table\n", group, setting.bit2);
+	printf("cut at %d-bit\n", setting.cut);
+	printf("group %c(len >= %d) use %d-bit segmentation table\n", group, setting.cut, setting.bit1);
+	printf("group %c'(len < %d) use %d-bit segmentation table\n", group, setting.cut, setting.bit2);
+	if(setting.newID)
+		printf("With NewID Mapping\n");
+	else
+		printf("Without NewID Mapping\n");
 }

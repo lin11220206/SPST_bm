@@ -115,44 +115,64 @@ int log_2(int n) {
     return count_bit(n) - 1;
 }
 
+void layer_count(int n, int *a) {
+    int x = 1, l = 0;
+
+    while (n > 0) {
+        if( l > 19) printf("warning!!!\n");
+
+        if (n >= x) {
+            a[l++] += x;
+            n -= x;
+            x *= 2;
+        }
+        else {
+            a[l] += n;
+            break;
+        }
+    }
+}
+
 int rule_check_exact(int *b1, int *b2, int r1, int r2) { //check if bucket b1 == b2
     int i;
-    if(r1 != r2) return 0;
+    if (r1 != r2) return 0;
 
-    for(i=0; i<r1; i++){
-        if(b1[i] != b2[i]) return 0;
+    for (i = 0; i < r1; i++) {
+        if (b1[i] != b2[i]) return 0;
     }
     return 1;
 }
 int rule_check_cover(int *b1, int *b2, int r1, int r2) { //check if bucket b2 cover b1
     int i, j, check;
-    for(i=0; i<r1; i++){
+    for (i = 0; i < r1; i++) {
         check = 0;
-        for(j=0; j<r2; j++){
-            if(b2[j] == b1[i]) check = 1;
+        for (j = 0; j < r2; j++) {
+            if (b2[j] == b1[i]) check = 1;
         }
 
-        if(check != 1) return 0;
+        if (check != 1) return 0;
     }
     return 1;
 }
 int rule_check_merge(int *b1, int *b2, int r1, int r2, int max_size) {
     int i, j, sum;
-    sum = r1+r2;
-    for(i=0; i<r1; i++){
-        for(j=0; j<r2; j++){
-            if(b1[i] == b2[j]) {
+    sum = r1 + r2;
+
+    for (i = 0; i < r1; i++) {
+        for (j = 0; j < r2; j++) {
+            if (b1[i] == b2[j]) {
                 sum--;
                 break;
             }
         }
     }
-    if( sum <= max_size) { //merge two bucket
-        for(i=0; i<r1; i++){
-            for(j=0; j<r2; j++){
-                if(b1[i] == b2[j]) break;
+    if ( sum <= max_size) { //merge two bucket
+
+        for (i = 0; i < r1; i++) {
+            for (j = 0; j < r2; j++) {
+                if (b1[i] == b2[j]) break;
             }
-            if(j==r2) {
+            if (j == r2) {
                 b2[r2++] = b1[i];
             }
         }
@@ -163,6 +183,7 @@ int rule_check_merge(int *b1, int *b2, int r1, int r2, int max_size) {
     return 0;
 }
 
-int cmp_r(const void *a, const void *b){
+
+int cmp_r(const void *a, const void *b) {
     return *(int *)a - *(int *)b;
 }

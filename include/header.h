@@ -2,7 +2,7 @@ struct ENTRY {
     unsigned int srcIP, dstIP;
 	unsigned char srclen, dstlen, proto;
 	unsigned short int srcPort[2], dstPort[2], type;
-	int rule, group;
+	int rule, group, n;
 };
 
 extern int num_entry;

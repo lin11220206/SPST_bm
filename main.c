@@ -14,34 +14,50 @@ int main(int argc, char *argv[]) {
     groupping();
     first_level();
     second_level();
+    l2_bucket_share();
+
+    rebuild();
+    groupping();
+    first_level();
+    second_level();
     //convert();
     l1_bucket_share();
+    node_count(setting.group);
+    node_count(setting.group+3);
     printf("===================\n\n");
+    /*printf("===================\n\n");
+
     printf("dim1 duplication\n");
     
     level1_duplication(setting.group);
     level1_duplication(setting.group+3);
 
     printf("===================\n\n");
+
     l2_bucket_share();
+    
     printf("dim2 duplication\n");
     
     level2_duplication(setting.group);
     level2_duplication(setting.group+3);
+
     printf("===================\n\n");
+    
     bucket_merge();
+
     printf("merge duplication\n");
     
     merge_duplication(setting.group);
     merge_duplication(setting.group+3);
     printf("===================\n\n");
 
+    
     printf("EIs\n");
     
     result2(setting.group);
     result2(setting.group+3);
-    printf("===================\n\n");
-
+    printf("===================\n\n");*/
+    
     //convert();
     //software_compress();
     

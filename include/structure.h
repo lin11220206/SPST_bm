@@ -22,6 +22,7 @@ struct level2 {
 struct bucket {
     int *rule, r, set, *rule2, r2; //r, r2: size of rule[], rule2[]
     unsigned int BV;
+    int mergeID;
 };
 
 extern struct level1 gp[6][65536];
@@ -29,9 +30,9 @@ extern int thres[6], thres2[6], thres3[4], count2[4], numcombine;
 extern int group[6][65536], groupp[6];
 extern struct bucket *uni_bucket[500000];
 extern int uni_num;
-extern struct bucket *merge_bucket[500000];
-extern int mrg_num;
-extern struct ENTRY3 *table3;
+extern struct bucket merge_bucket[6][100000];
+extern int mrg_num[6];
+extern struct ENTRY *table3;
 
 void groupping();
 void first_level();
@@ -40,6 +41,7 @@ void convert();
 void l1_bucket_share();
 void l2_bucket_share();
 void bucket_merge();
+void rebuild();
 int cmp(const void *, const void *);
 //void software_compress();
 void sort();
