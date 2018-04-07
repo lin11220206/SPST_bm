@@ -8,3 +8,4 @@ int rule_check_exact(int *, int *, int, int);
 int rule_check_cover(int *, int *, int, int);
 int rule_check_merge(int *, int *, int, int, int);
 int cmp_r(const void *, const void *);
+int ceil_log2(unsigned long long);

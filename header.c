@@ -15,23 +15,23 @@ void read_table(char *str, int n) {
 
     while(i--) {
         if(i == 1)
-	        sprintf(buf, "%s\0", strtok(str, tok));
+	        sprintf(buf, "%s%c", strtok(str, tok), '\0');
         if(i == 0)
-	        sprintf(buf, "%s\0", strtok(NULL, tok));
+	        sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 	    ip = atoi(buf);
         ip <<= 8;
-	    sprintf(buf, "%s\0", strtok(NULL, tok));
+	    sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 	    ip += atoi(buf);
         ip <<= 8;
-	    sprintf(buf, "%s\0", strtok(NULL, tok));
+	    sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 	    ip += atoi(buf);
         ip <<= 8;
-    	sprintf(buf, "%s\0", strtok(NULL, tok));
+    	sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 	    ip += atoi(buf);
 	    str1 = (char *) strtok(NULL, tok);
 
 	    if(str1 != NULL) {
-		    sprintf(buf, "%s\0", str1);
+		    sprintf(buf, "%s%c", str1, '\0');
 	    	len = atoi(buf);
     	}
 
@@ -46,21 +46,21 @@ void read_table(char *str, int n) {
     }
 
     if(table[n].srclen < 5 && table[n].dstlen < 5)
-        table[n].group = -1;
-    else if(table[n].srclen >= 5 && table[n].dstlen < 5)
         table[n].group = 0;
-    else if(table[n].srclen < 5 && table[n].dstlen >= 5)
+    else if(table[n].srclen >= 5 && table[n].dstlen < 5)
         table[n].group = 1;
-    else if(table[n].srclen >= 5 && table[n].dstlen >= 5)
+    else if(table[n].srclen < 5 && table[n].dstlen >= 5)
         table[n].group = 2;
+    else if(table[n].srclen >= 5 && table[n].dstlen >= 5)
+        table[n].group = 3;
 
-	sprintf(buf, "%s\0", strtok(NULL, tok));
+	sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 	table[n].srcPort[0] = atoi(buf);
-	sprintf(buf, "%s\0", strtok(NULL, tok));
+	sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 	table[n].srcPort[1] = atoi(buf);
-	sprintf(buf, "%s\0", strtok(NULL, tok));
+	sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 	table[n].dstPort[0] = atoi(buf);
-	sprintf(buf, "%s\0", strtok(NULL, tok));
+	sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 	table[n].dstPort[1] = atoi(buf);
 
 	str1 = (char *) strtok(NULL, tok);
@@ -70,17 +70,8 @@ void read_table(char *str, int n) {
         table[n].proto = (str1[2] - 48) * 16 + (str1[3] - 87);
     else
         table[n].proto = (str1[2] - 48) * 16 + (str1[3] - 48);
-
-    if(table[n].group == 1) {
-        ip = table[n].srcIP;
-        table[n].srcIP  = table[n].dstIP;
-        table[n].dstIP  = ip;
-        len             = table[n].srclen;
-        table[n].srclen = table[n].dstlen;
-        table[n].dstlen = len;
-    }
     
-    if(setting.change && table[n].group == 2){
+    if(setting[table[n].group].change){
         ip = table[n].srcIP;
         table[n].srcIP  = table[n].dstIP;
         table[n].dstIP  = ip;
@@ -88,22 +79,11 @@ void read_table(char *str, int n) {
         table[n].srclen = table[n].dstlen;
         table[n].dstlen = len;
     }
-    table[n].rule = 0;
+    table[n].rule = -1;
 
-    /*switch(table[n].group) {
-        case 0:
+    if(table[n].srclen < setting[table[n].group].cut && table[n].group < 4)
+        table[n].group += 4;
 
-            break;
-        case 1:
-
-            break;
-        case 2:
-            if(table[n].srclen < 16)
-                table[n].group = 5; //group D-16
-            break;
-        default:
-            break;
-    }   */
 }
 
 void set_table(char *file_name) {
@@ -122,7 +102,6 @@ void set_table(char *file_name) {
 	while(fgets(string, 100, fp) != NULL) {
         table[num_entry].rule = num_entry + 1;
         read_table(string, num_entry++);
-        if(table[num_entry-1].group != setting.group) num_entry--;
 	}
     //if(fp != 0)
         //free(fp);

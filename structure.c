@@ -7,13 +7,14 @@
 #include "clock.h"
 #include "global.h"
 
-struct level1 gp[6][65536];
-int thres[6], thres2[6], thres3[4], count2[4], numcombine;
-int group[6][65536], groupp[6];
+struct level1 gp[8][65536];
+int thres[8], thres2[8], thres3[8], count2[8], numcombine;
+int group[8][65536], groupp[8];
+int seg_bit[8];
 struct bucket *uni_bucket[500000];
 int uni_num = 0;
-struct bucket merge_bucket[6][100000];
-int mrg_num[6] = {0};
+struct bucket merge_bucket[8][100000];
+int mrg_num[8] = {0};
 
 // group: Group A~D, SrcIP 5-bit Seg後各root的rule數, groupp: 該組裡的rule數
 // max[i]: Group A~D中擁有最多rules的root
@@ -23,6 +24,7 @@ struct ENTRY *table3;
 void rebuild() {
     int i, na, j, k, r;
 
+    printf("start rebuild ...\n");
     int *count = calloc(num_entry , sizeof(int));
 
     for (i = 0; i < num_entry; i++)
@@ -30,7 +32,7 @@ void rebuild() {
 
     int ruleID, N;
 
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
             for (j = 1; j < N; j++) {
@@ -47,31 +49,30 @@ void rebuild() {
     }
 
     for (i = 0; i < num_entry; i++) {
-        if (count[i] > 1 && table[i].group < 3) {
-            table[i].group += 3;
+        if (count[i] > 1 && table[i].group < 4 && setting[table[i].group].rebuild) {
+            table[i].group += 4;
         }
     }
     //reset all extra memory
-    /*printf("start clean memory1\n");
-    for(i=0; i<6; i++){
-        for(na=0; na<65536; na++){
+    /*
+    for (i = 0; i < 8; i++) {
+        for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
-            for(j=1; j<N; j++){
-                for(k=1; k<gp[i][na].lv2[j].n; k++){
+            for (j = 1; j < N; j++) {
+                for (k = 1; k < gp[i][na].lv2[j].n; k++) {
                     free(gp[i][na].lv2[j].b[k]->rule);
                     free(gp[i][na].lv2[j].b[k]->rule2);
                 }
             }
         }
     }
-    printf("start clean memory2\n");
-    for(i=0; i<6; i++){
-        for(na=0; na<65536; na++){
+    for (i = 0; i < 8; i++) {
+        for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
-            for(j=0; j<N; j++){
-                if(gp[i][na].n1[j] == 0) continue;
+            for (j = 0; j < N; j++) {
+                if (gp[i][na].n1[j] == 0) continue;
 
-                for (k = 0; k < (gp[i][na].n1[j] * 2 + 1); k++){
+                for (k = 0; k < (gp[i][na].n1[j] * 2 + 1); k++) {
                     free(gp[i][na].lv2[j].b[k]);
                 }
 
@@ -84,9 +85,8 @@ void rebuild() {
 
             }
         }
-    }*//*
-    printf("start clean memory3\n");
-    for (i = 0; i < 6; i++) {
+    }
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++) {
             free(gp[i][na].endpoint);
             free(gp[i][na].lv2);
@@ -96,124 +96,73 @@ void rebuild() {
             group[i][na] = 0;
         }
         groupp[i] = 0;
-    }*/
+    }
 
-    for(i=0; i<6; i++)
-        for(na=0; na<65536; na++)
+    for (i = 0; i < 8; i++)
+        for (na = 0; na < 65536; na++)
             group[i][na] = 0;
 
-    printf("start clean memory4\n");
     memset(thres2, 0, sizeof(int) * 6);
     for (i = 0; i < 500000; i++) {
         uni_bucket[i] = 0;
     }
-    uni_num = 0;
-
-    setting.rebuild = 1;
-
-    //free(count);
-    printf("finish rebuild\n");
+    uni_num = 0;*/
 }
 
 void groupping() {
-    int i, j, max[3] = {0}, segment;
+    int i, j, segment, g;
     unsigned int ip, len;
 
-    //char s[] = "";
-    //printf("%-40s", s);
     printf("start groupping ...\n");
 
-    if (setting.rebuild) {
-        for (i = 0; i < num_entry; i++) {
-            ip = table[i].srcIP;
-            len = table[i].srclen;
-
-            if (table[i].group < 3) {
-                if (setting.bit1 == 0)
-                    segment = 0;
-                else
-                    segment = ip >> 32 - setting.bit1;
-
-                group[table[i].group][segment]++;
-                groupp[table[i].group]++;
-            }
-            else {
-                if (setting.bit2 == 0)
-                    segment = 0;
-                else
-                    segment = ip >> 32 - setting.bit2;
-
-                group[table[i].group][segment]++;
-                groupp[table[i].group]++;
-            }
-        }
-
-        return;
+    for (i = 0; i < 4; i++) {
+        seg_bit[i] = setting[i].bit1;
+        seg_bit[i + 4] = setting[i].bit2;
     }
 
     for (i = 0; i < num_entry; i++) { // count rule number of segmentation roots
-        //if (table[i].group != setting.group) continue; //don't need because similar code in header.c
 
         ip = table[i].srcIP;
         len = table[i].srclen;
+        g = table[i].group;
 
-        if (len >= setting.cut) { // use bit1-bit segmentation table
-            if (setting.bit1 == 0)
-                segment = 0;
-            else
-                segment = ip >> 32 - setting.bit1;
+        if (setting[g < 4 ? g : g - 4].ignore) continue;
 
-            group[table[i].group][segment]++;
-            groupp[table[i].group]++;
+        if (seg_bit[g] == 0) {
+            group[g][0]++;
+            groupp[g]++;
         }
-        else { // use bit2-bit segmentation table
-
-            if (len < setting.bit2) printf("warning!\n");
-
-            if(table[i].group < 3)
-                table[i].group += 3;    
-
-            if (setting.bit2 == 0)
-                segment = 0;
-            else
-                segment = ip >> 32 - setting.bit2;
-
-            group[table[i].group][segment]++;
-            groupp[table[i].group]++;
+        else if (len >= seg_bit[g]) {
+            segment = ip >> 32 - seg_bit[g];
+            group[g][segment]++;
+            groupp[g]++;
         }
-        /*
-        if (table[i].group > 2) { //don't need segmentation table
-            group[table[i].group][0]++;
-            groupp[table[i].group]++;
-        }
-        else { // need segmentation table
-            if (len >= 16) {
-                group[table[i].group][ip >> 16]++;
-                groupp[table[i].group]++;
+        else {
+            segment = ip >> 32 - seg_bit[g];
+            for (j = 0; j < (1 << seg_bit[g] - len); j++) {
+                group[g][segment + j]++;
             }
-            else { // duplication
-                for (j = 0; j < (1 << 16 - len); j++) {
-                    group[table[i].group][(ip >> 16) + j]++;
-                    groupp[table[i].group]++;
-                }
-            }
-        }*/
+            groupp[g]++;
+        }
+
     }
 }
 
 void first_level() {
-    int i, j, g, N, na, k, segment;
+    int i, j, g, N, na, k, segment, ruleID;
 
-    printf("start computing first level ...");
+    printf("start computing first level ...\n");
 
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++) {
-            gp[i][na].endpoint = (unsigned int *) malloc ((group[i][na] * 2 + 1) * sizeof(unsigned int)); // n條rule最多有2n+1個endpoints
-            gp[i][na].lv2      = (struct level2 *) malloc ((group[i][na] * 2 + 1) * sizeof(struct level2)); //每個endpoints對應一個level 2 structure
-            gp[i][na].n1       = (int *) malloc ((group[i][na] * 2 + 1) * sizeof(int)); //每個endpoints被cover的次數
-            gp[i][na].n        = 1; // endpoints數
-            gp[i][na].rule     = (int *) calloc(group[i][na] , sizeof(int));
-            gp[i][na].r        = 0;
+            if (group[i][na] > 0) {
+                gp[i][na].endpoint = (unsigned int *) malloc ((group[i][na] * 2 + 1) * sizeof(unsigned int)); // n條rule最多有2n+1個endpoints
+                gp[i][na].lv2      = (struct level2 *) malloc ((group[i][na] * 2 + 1) * sizeof(struct level2)); //每個endpoints對應一個level 2 structure
+                gp[i][na].n1       = (int *) malloc ((group[i][na] * 2 + 1) * sizeof(int)); //每個endpoints被cover的次數
+                gp[i][na].n        = 1; // endpoints數
+                gp[i][na].rule     = (int *) calloc(group[i][na] , sizeof(int));
+                gp[i][na].r        = 0;
+            }
         }
     }
 
@@ -221,51 +170,32 @@ void first_level() {
     int len;
 
     for (i = 0; i < num_entry; i++) {  //insert ruleID to there segmentation roots
-        //if (table[i].group != setting.group) continue; //don't need because similar code in header.c
+        //if (table[i].group != setting[0].group) continue; //don't need because similar code in header.c
 
         ip = table[i].srcIP;
         len = table[i].srclen;
+        g = table[i].group;
 
-        if (table[i].group < 3) { // use bit1-bit segmentation table
-            if (setting.bit1 == 0)
-                segment = 0;
-            else
-                segment = ip >> 32 - setting.bit1;
+        if (setting[g < 4 ? g : g - 4].ignore) continue;
 
-            gp[table[i].group][segment].rule[gp[table[i].group][segment].r++] = i;
+        if (seg_bit[g] == 0) {
+            segment = 0;
+            gp[g][segment].rule[gp[g][segment].r++] = i;
         }
-        else { // use bit2-bit segmentation table
-            if (setting.bit2 == 0)
-                segment = 0;
-            else
-                segment = ip >> 32 - setting.bit2;
-
-            gp[table[i].group][segment].rule[gp[table[i].group][segment].r++] = i;
-        }
-        /*
-        if (table[i].group > 2) {
-            gp[table[i].group][0].rule[gp[table[i].group][0].r++] = i;
+        else if (len >= seg_bit[g]) {
+            segment = ip >> 32 - seg_bit[g];
+            gp[g][segment].rule[gp[g][segment].r++] = i;
         }
         else {
-            if (len >= 16) {
-                na = ip >> 16;
-                gp[table[i].group][na].rule[gp[table[i].group][na].r++] = i;
+            segment = ip >> 32 - seg_bit[g];
+            for (j = 0; j < (1 << seg_bit[g] - len); j++) {
+                gp[g][segment + j].rule[gp[g][segment + j].r++] = i;
             }
-            else {
-                for (j = 0; j < (1 << 16 - len); j++) {
-                    na = (ip >> 16) + j;
-                    gp[table[i].group][na].rule[gp[table[i].group][na].r++] = i;
-                }
-            }
-        }*/
-        //g = table[i].group;
-        //gp[g][0].rule[gp[g][0].r++] = i;
-
-
+        }
     }
 
-    int ruleID;
-    for (i = 0; i < 6; i++) {
+    int cccc = 0;
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++)
         {
             for (j = 0; j < gp[i][na].r; j++)
@@ -279,11 +209,16 @@ void first_level() {
                 r = (len == 0) ? -1 : (((ip >> (32 - len)) + 1) << (32 - len)) - 1; //right interval
 
                 add_endpoint(gp[i][na].endpoint, &gp[i][na].n, l, r);
+                if (i == 5) {
+                    //printf("%d %X %X\n", gp[i][na].n, l, r);
+                    cccc++;
+                }
             }
         }
     }
 
-    for (i = 0; i < 6; i++) {
+    //printf("TTTTTTTT    %d TTTTTTTTTTTTTTt\n", cccc);
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++)
         {
             for (j = 0; j < gp[i][na].r; j++)
@@ -299,17 +234,7 @@ void first_level() {
         }
     }
 
-    for (i = 0; i < 6; i++) {
-        for (na = 0; na < 65536; na++) {
-            for (j = 1; j < gp[i][na].n; j++) {
-                if (gp[i][na].n1[j] > thres[i]) thres[i] = gp[i][na].n1[j]; // 找出cover最多rule的interval
-            }
-        }
-
-        //printf("group %c bucket size(lv1): %d\n", i + 65, thres[i]);
-    }
-
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++) {
             N = gp[i][na].n; //child
 
@@ -333,30 +258,17 @@ void first_level() {
             }
         }
     }
-
-    for (i = 0; i < 6; i++) {
-        for (na = 0; na < 65536; na++) {
-            for (j = 0; j < gp[i][na].r; j++) {
-                ruleID = gp[i][na].rule[j];
-
-                ip = table[ruleID].srcIP;
-                len = table[ruleID].srclen;
-            }
-        }
-    }
-
-    //printf("finish\n");
 }
 
 void second_level() {
     int i, j, k, count, g, N, T, na;
 
-    printf("start computing second level ...");
+    printf("start computing second level ...\n");
 
     unsigned int l, r, ip, l2, r2, ip2;
     int len, len2;
     int ruleID;
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++) {
             for (j = 0; j < gp[i][na].r; j++) {
                 ruleID = gp[i][na].rule[j];
@@ -372,7 +284,7 @@ void second_level() {
         }
     }
 
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++)
         {
             N = gp[i][na].n;
@@ -460,15 +372,11 @@ void convert() {
     //printf("number of combination of port & protocol: %d\n\n", n);
     nn = n;
 
-    thres2[0] = 0;
-    thres2[1] = 0;
-    thres2[2] = 0;
-    thres2[3] = 0;
-    thres2[4] = 0;
-    thres2[5] = 0;
+    for (i = 0; i < 8; i++)
+        thres2[i] = 0;
 
     int *tmp, na;
-    for (m = 0; m < 6; m++) {
+    for (m = 0; m < 8; m++) {
         for (na = 0; na < 65536; na++) {
             N = gp[m][na].n; // dim 1 的endpoints
 
@@ -486,29 +394,17 @@ void convert() {
                             gp[m][na].lv2[i].b[j]->rule2[n++] = table[ruleID].rule; // merge bucket
                         }
                     }
-                    //change rule, rule2, r, r2
-                    //gp[m][na].lv2[i].b[j]->r2 = n;
                     gp[m][na].lv2[i].b[j]->r2 = n;
                     qsort(gp[m][na].lv2[i].b[j]->rule2, n, sizeof(int), cmp_r);
-                    /*gp[m][na].lv2[i].b[j]->r2 = gp[m][na].lv2[i].b[j]->r;
-                    gp[m][na].lv2[i].b[j]->r = n;
-                    tmp = gp[m][na].lv2[i].b[j]->rule;
-                    gp[m][na].lv2[i].b[j]->rule = gp[m][na].lv2[i].b[j]->rule2;
-                    gp[m][na].lv2[i].b[j]->rule2 = tmp;
-
-                    qsort(gp[m][na].lv2[i].b[j]->rule, n, sizeof(int), cmp_r);*/
 
                     if (n > thres2[m]) thres2[m] = n;
                 }
             }
         }
-        //printf("group %c bucket size: %-4d\n", m + 65, thres3[m]);
     }
-
-    //printf("finish\n");
 }
 void l1_bucket_share() {
-
+    printf("start l1_bucket_share ...\n");
     int i, j, k, na;
     int N, ruleID;
 
@@ -518,10 +414,9 @@ void l1_bucket_share() {
 
     int *now;
     int l;
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
-            if (N < 2) continue;
 
             for (j = 1; j < N; j++) {
                 if (gp[i][na].lv2[j].r == 0) continue;
@@ -550,17 +445,16 @@ void l1_bucket_share() {
     return;
 }
 void l2_bucket_share() {
-    printf("start bucket_share\n");
+    printf("start l2_bucket_share ...\n");
     int i, j, k, l, na;
     int N, ruleID;
 
     //uni_bucket = (struct bucket **) calloc(500000 , sizeof(struct bucket *));
 
     struct bucket *now;
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
-            if (N < 2) continue;
 
             for (j = 1; j < N; j++) {
                 for (k = 0; k < gp[i][na].lv2[j].n; k++) {
@@ -571,7 +465,7 @@ void l2_bucket_share() {
 
                         if (rule_check_exact(now->rule, uni_bucket[l]->rule, now->r, now->r)) {
                             //free(gp[i][na].lv2[j].b[k]);
-                            gp[i][na].lv2[j].b[k] = uni_bucket[l];
+                            //gp[i][na].lv2[j].b[k] = uni_bucket[l];
                             gp[i][na].lv2[j].b_type[k] = 0;
                             break;
                         }
@@ -594,7 +488,7 @@ void l2_bucket_share() {
     }*/
 }
 void bucket_merge() {
-    //printf("start bucket_merge\n");
+    printf("start bucket_merge ...\n");
     //qsort(uni_bucket, uni_num, sizeof(struct bucket *), cmp);
 
 
@@ -606,7 +500,7 @@ void bucket_merge() {
     }*/
     //sort();
 
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 8; i++) {
         for (j = 0; j < 100000; j++) {
             merge_bucket[i][j].rule = (int *) calloc(thres2[i], sizeof(int));
             merge_bucket[i][j].r = 0;
@@ -616,19 +510,14 @@ void bucket_merge() {
     qsort(uni_bucket, uni_num, sizeof(struct bucket *), cmp);
 
     struct bucket *now;
-    struct ENTRY *table_use;
-    if (setting.newID)
-        table_use = table3;
-    else
-        table_use = table;
 
     for (i = 0; i < uni_num; i++) {
         now = uni_bucket[i];
-        g = table[now->rule[0]].group;
+        g = table3[now->rule2[0]].group;
 
         for (j = 0; j < mrg_num[g]; j++) {
             int t = thres2[g];
-            int r = rule_check_merge(now->rule, merge_bucket[g][j].rule, now->r, merge_bucket[g][j].r, t);
+            int r = rule_check_merge(now->rule2, merge_bucket[g][j].rule, now->r2, merge_bucket[g][j].r, t);
             if (r) {
                 merge_bucket[g][j].r = r;
                 now->mergeID = j;
@@ -636,39 +525,16 @@ void bucket_merge() {
             }
         }
         if ( j == mrg_num[g]) { // copy now to merge_bucket[]
-            for (k = 0; k < now->r; k++) {
-                merge_bucket[g][mrg_num[g]].rule[k] = now->rule[k];
+            for (k = 0; k < now->r2; k++) {
+                merge_bucket[g][mrg_num[g]].rule[k] = now->rule2[k];
             }
-            merge_bucket[g][mrg_num[g]].r = now->r;
+            merge_bucket[g][mrg_num[g]].r = now->r2;
 
             now->mergeID = mrg_num[g];
             mrg_num[g]++;
 
         }
-        /*
-        for (j = 0; j < mrg_num; j++) {
-            if (table_use[now->rule[0]].group != table_use[merge_bucket[j]->rule[0]].group) continue;
-            int t = thres2[table_use[now->rule[0]].group];
-            int r = rule_check_merge(now->rule, merge_bucket[j]->rule, now->r, merge_bucket[j]->r, t);
-            if (r) {
-                merge_bucket[j]->r = r;
-                break;
-            }
-        }
-        if (j == mrg_num) { // copy now to merge_bucket[]
-
-            merge_bucket[mrg_num++] = now;
-        }*/
     }
-    /*
-    for(i=0; i<mrg_num; i++){
-        printf("bucket %d: ", i);
-        for(j=0; j<merge_bucket[i]->r; j++){
-            printf("%d ", merge_bucket[i]->rule[j]+1);
-        }
-        printf("\n");
-    }*/
-    //printf("finish bucket_merge\n");
 }
 
 int cmp(const void *a, const void *b) {

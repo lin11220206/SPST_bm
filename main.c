@@ -7,59 +7,44 @@
 #include "global.h"
 
 int main(int argc, char *argv[]) {
-    set(argv);
+    set(argv[2]);
     print_setting();
     set_table(argv[1]);
 
     groupping();
     first_level();
     second_level();
-    l2_bucket_share();
-
-    rebuild();
-    groupping();
-    first_level();
-    second_level();
-    //convert();
     l1_bucket_share();
-    node_count(setting.group);
-    node_count(setting.group+3);
-    printf("===================\n\n");
-    /*printf("===================\n\n");
-
-    printf("dim1 duplication\n");
-    
-    level1_duplication(setting.group);
-    level1_duplication(setting.group+3);
-
-    printf("===================\n\n");
-
     l2_bucket_share();
     
-    printf("dim2 duplication\n");
-    
-    level2_duplication(setting.group);
-    level2_duplication(setting.group+3);
-
-    printf("===================\n\n");
-    
+    if(setting[0].rebuild || setting[1].rebuild || setting[2].rebuild || setting[3].rebuild) {
+        rebuild();
+        groupping();
+        first_level();
+        second_level();
+        l1_bucket_share();
+        l2_bucket_share();
+    }
+    convert();
     bucket_merge();
 
-    printf("merge duplication\n");
-    
-    merge_duplication(setting.group);
-    merge_duplication(setting.group+3);
-    printf("===================\n\n");
+    get_result();
+    compute_memory_use();
 
-    
-    printf("EIs\n");
-    
-    result2(setting.group);
-    result2(setting.group+3);
-    printf("===================\n\n");*/
-    
-    //convert();
-    //software_compress();
+    int i;
+
+    for(i=0; i<4; i++) {
+        show_duplication(i);
+        show_duplication(i+4);
+    }
+
+    show_buckets_data();
+    for(i=0; i<4; i++) {
+        show_nodes_count(i);
+        show_nodes_count(i+4);
+    }
+
+    show_memory_use();
     
     return 0;
 }

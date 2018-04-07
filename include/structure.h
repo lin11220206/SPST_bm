@@ -1,9 +1,3 @@
-struct ENTRY3 {
-    unsigned short int Port[4], type, n;
-    unsigned char proto; 
-    int group;
-};
-
 struct level1 {
     unsigned int *endpoint;
     struct level2 *lv2;
@@ -25,13 +19,14 @@ struct bucket {
     int mergeID;
 };
 
-extern struct level1 gp[6][65536];
-extern int thres[6], thres2[6], thres3[4], count2[4], numcombine;
-extern int group[6][65536], groupp[6];
+extern struct level1 gp[8][65536];
+extern int thres[8], thres2[8], thres3[8], count2[8], numcombine;
+extern int group[8][65536], groupp[8];
+extern int seg_bit[8];
 extern struct bucket *uni_bucket[500000];
 extern int uni_num;
-extern struct bucket merge_bucket[6][100000];
-extern int mrg_num[6];
+extern struct bucket merge_bucket[8][100000];
+extern int mrg_num[8];
 extern struct ENTRY *table3;
 
 void groupping();

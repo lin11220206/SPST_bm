@@ -1,40 +1,51 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "global.h" 
 
-struct global_setting setting;
+struct global_setting setting[4];
 
-void set(char **arg){
-	setting.group = arg[2][0];
-	if(setting.group == 'B') setting.group = 0;
-	else if(setting.group == 'C') setting.group = 1;
-	else if(setting.group == 'D') setting.group = 2; 
-	else setting.group = -1;
+void set(char *filename){
+	FILE *fp;
+	char str[100];
+	char buf[10];
+	char tok[] = " \t\n";
+	fp = fopen(filename, "r");
+	int i = 0;
 
-	setting.change = atoi(arg[3]);
-	setting.cut = 16;
-	//setting.cut = atoi(arg[4]);
-	setting.bit1 = atoi(arg[4]);
-	setting.bit2 = atoi(arg[5]);
-	setting.newID = atoi(arg[6]);
-	setting.rebuild = 0;
+	while(fgets(str, 100, fp) != NULL) {
+		if(i>4) break;
+
+		if(str[0] == '@') continue;
+
+		sprintf(buf, "%s%c", strtok(str, tok), '\0');
+		setting[i].cut = atoi(buf);
+		sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
+		setting[i].bit1 = atoi(buf);
+		sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
+		setting[i].bit2 = atoi(buf);
+		sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
+		setting[i].change = atoi(buf);
+		sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
+		setting[i].newID = atoi(buf);
+		sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
+		setting[i].rebuild = atoi(buf);
+		sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
+		setting[i].ignore = atoi(buf);
+
+		i++;
+	}
 }
 
 void print_setting(){
-	char group;
-
-	if(setting.group == 0) group = 'B';
-	else if(setting.group == 1) group = 'C';
-	else if(setting.group == 2) group = 'D';
-	else group = '?';
-
-	printf("select group: %c\n", group);
-	printf("change: %c\n", (setting.change)? 'Y': 'N');
-	printf("cut at %d-bit\n", setting.cut);
-	printf("group %c(len >= %d) use %d-bit segmentation table\n", group, setting.cut, setting.bit1);
-	printf("group %c'(len < %d) use %d-bit segmentation table\n", group, setting.cut, setting.bit2);
-	if(setting.newID)
-		printf("With NewID Mapping\n");
-	else
-		printf("Without NewID Mapping\n");
+	int i;
+	for(i=0; i<4; i++) {
+		printf("%d ", setting[i].cut);
+		printf("%d ", setting[i].bit1);
+		printf("%d ", setting[i].bit2);
+		printf("%d ", setting[i].change);
+		printf("%d ", setting[i].newID);
+		printf("%d ", setting[i].rebuild);
+		printf("%d\n", setting[i].ignore);
+	}
 }
