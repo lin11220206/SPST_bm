@@ -40,6 +40,7 @@ void get_result() {
             data.dim2_nodes[i][j] = 0;
         }
         data.dim1_roots[i] = 0;
+        data.dim1_rules[i] = 0;
     }
 
     struct ENTRY *table_use = table3;
@@ -64,6 +65,8 @@ void get_result() {
 
             for (j = 1; j < N; j++) {
                 if (gp[i][na].lv2[j].type != 1) continue;
+                if (gp[i][na].lv2[j].r > data.dim1_rules[i])
+                    data.dim1_rules[i] = gp[i][na].lv2[j].r;
                 for (k = 0; k < gp[i][na].lv2[j].r; k++) {
                     ruleID = gp[i][na].lv2[j].rule[k];
                     data.dim1_count[ruleID]++;
@@ -284,56 +287,56 @@ void show_buckets_data() {
     int i;
 
     for (i = 0; i < 4; i++) {
-        printf("%c(%d-bit), ", i+'A', setting[i].bit1);
-        printf("%c'(%d-bit), ", i+'A', setting[i].bit2);
+        printf("%c(%d-bit), ", i + 'A', setting[i].bit1);
+        printf("%c'(%d-bit), ", i + 'A', setting[i].bit2);
     }
     printf("\n");
 
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.total_rules[i]);
-        printf("%d, ", data.total_rules[i+4]);
+        printf("%d, ", data.total_rules[i + 4]);
     }
     printf("\n");
 
-    for(i=0; i<4; i++) {
+    for (i = 0; i < 4; i++) {
         printf("%d, ", data.dim1_roots[i]);
-        printf("%d, ", data.dim1_roots[i+4]);
+        printf("%d, ", data.dim1_roots[i + 4]);
     }
     printf("\n");
 
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.dim1_buckets[i][0]);
-        printf("%d, ", data.dim1_buckets[i+4][0]);
+        printf("%d, ", data.dim1_buckets[i + 4][0]);
     }
     printf("\n");
 
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.dim1_buckets[i][1]);
-        printf("%d, ", data.dim1_buckets[i+4][1]);
+        printf("%d, ", data.dim1_buckets[i + 4][1]);
     }
     printf("\n");
 
-    for (i = 0; i < 4; i++){
+    for (i = 0; i < 4; i++) {
         printf("%d, ", data.dim2_buckets[i][0]);
-        printf("%d, ", data.dim2_buckets[i+4][0]);
+        printf("%d, ", data.dim2_buckets[i + 4][0]);
     }
     printf("\n");
 
-    for (i = 0; i < 4; i++){
+    for (i = 0; i < 4; i++) {
         printf("%d, ", data.dim2_buckets[i][1]);
-        printf("%d, ", data.dim2_buckets[i+4][1]);
+        printf("%d, ", data.dim2_buckets[i + 4][1]);
     }
     printf("\n");
 
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.merge_buckets[i]);
-        printf("%d, ", data.merge_buckets[i+4]);
+        printf("%d, ", data.merge_buckets[i + 4]);
     }
     printf("\n");
 
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.bucket_size[i]);
-        printf("%d, ", data.bucket_size[i+4]);
+        printf("%d, ", data.bucket_size[i + 4]);
     }
     printf("\n");
 
@@ -374,32 +377,32 @@ void show_memory_use() {
     int i;
 
     for (i = 0; i < 4; i++) {
-        printf("%c(%d-bit), ", i+'A', setting[i].bit1);
-        printf("%c'(%d-bit), ", i+'A', setting[i].bit2);
+        printf("%c(%d-bit), ", i + 'A', setting[i].bit1);
+        printf("%c'(%d-bit), ", i + 'A', setting[i].bit2);
     }
     printf("\n");
 
     for (i = 0; i < 4; i++) {
         printf("%d, ", memory_use.seg_table[i]);
-        printf("%d, ", memory_use.seg_table[i+4]);
+        printf("%d, ", memory_use.seg_table[i + 4]);
     }
     printf("\n");
 
     for (i = 0; i < 4; i++) {
         printf("%d, ", memory_use.total[i][0]);
-        printf("%d, ", memory_use.total[i+4][0]);
+        printf("%d, ", memory_use.total[i + 4][0]);
     }
     printf("\n");
 
     for (i = 0; i < 4; i++) {
         printf("%d, ", memory_use.total[i][1]);
-        printf("%d, ", memory_use.total[i+4][1]);
+        printf("%d, ", memory_use.total[i + 4][1]);
     }
     printf("\n");
 
     for (i = 0; i < 4; i++) {
         printf("%d, ", memory_use.bucket_ptr[i]);
-        printf("%d, ", memory_use.bucket_ptr[i+4]);
+        printf("%d, ", memory_use.bucket_ptr[i + 4]);
     }
     printf("\n");
 
@@ -409,6 +412,25 @@ void show_memory_use() {
 
     printf("\n=========================\n");
     return;
+}
+
+void show_prefix_length(char g) {
+    
+    int i;
+    int srclen[10] = {0};
+    int dstlen[10] = {0};
+
+
+    for(i=0; i<num_entry; i++) {
+        if(table[i].group != g) continue;
+
+        srclen[table[i].srclen]++;
+        dstlen[table[i].dstlen]++;
+    }
+
+    for(i=0; i<10; i++) {
+        printf("%d\t%d\t%d\n", i, srclen[i], dstlen[i]);
+    }
 }
 
 /*

@@ -10,6 +10,7 @@ struct result {
 	int dim1_nodes[8][20];
 	int dim2_nodes[8][20];
 	int dim1_roots[8];
+	int dim1_rules[8];
 };
 
 struct memory {
@@ -33,6 +34,8 @@ void show_duplication(char);
 void show_buckets_data();
 void show_nodes_count(char);
 void show_memory_use();
+
+void show_prefix_length(char);
 
 void level1_duplication(int);
 void level2_duplication(int);
