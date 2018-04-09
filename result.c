@@ -11,7 +11,7 @@ struct result data;
 struct memory memory_use;
 
 void get_result() {
-    printf("start getting result ...\n");
+    //printf("start getting result ...\n");
 
     int i, na, j, k, r, s, ruleID, newID, N, g;
     int total, total2;
@@ -196,12 +196,18 @@ void compute_memory_use() {
         for (i = 0; i < n1; i++) {
             memory_use.dim1_node_ptr[g][i] = data.dim1_nodes[g][i] * (ceil_log2(data.dim1_nodes[g][i + 1]) + ceil_log2(data.dim1_buckets[g][1]) + 32 + 2);
         }
-        memory_use.dim1_node_ptr[g][i] = data.dim1_nodes[g][i] * (ceil_log2(data.dim1_buckets[g][1]) + 32 + 2);
 
-        for (i = 0; i < n2; i++) {
-            memory_use.dim2_node_ptr[g][i] = data.dim2_nodes[g][i] * (ceil_log2(data.dim2_nodes[g][i + 1]) + ceil_log2(data.dim2_buckets[g][1]) + 32 + 2);
+        if (setting[g < 4 ? g : g - 4].dim1_only) {
+            memory_use.dim1_node_ptr[g][i] = data.dim1_nodes[g][i] * (ceil_log2(data.dim2_buckets[g][1]) + 32 + 2);
         }
-        memory_use.dim2_node_ptr[g][i] = data.dim2_nodes[g][i] * (ceil_log2(data.dim2_buckets[g][1]) + 32 + 2);
+        else {
+            memory_use.dim1_node_ptr[g][i] = data.dim1_nodes[g][i] * (ceil_log2(data.dim1_buckets[g][1]) + 32 + 2);
+
+            for (i = 0; i < n2; i++) {
+                memory_use.dim2_node_ptr[g][i] = data.dim2_nodes[g][i] * (ceil_log2(data.dim2_nodes[g][i + 1]) + ceil_log2(data.dim2_buckets[g][1]) + 32 + 2);
+            }
+            memory_use.dim2_node_ptr[g][i] = data.dim2_nodes[g][i] * (ceil_log2(data.dim2_buckets[g][1]) + 32 + 2);
+        }
     }
 
     for (g = 0; g < 8; g++) {
@@ -262,7 +268,7 @@ void show_duplication(char g) {
     if (g < 4) sprintf(gName, "%c(%d-bit)", g + 'A', setting[g].bit1);
     else sprintf(gName, "%c'(%d-bit)", g - 4 + 'A', setting[g - 4].bit2);
 
-    printf("%s\n", gName);
+    printf("%s, ", gName);
 
     int n = 0;
     for (i = 19; i >= 0; i--) {
@@ -272,13 +278,22 @@ void show_duplication(char g) {
         }
     }
 
-    printf("%d\n", data.total_rules[g]);
+    printf("total rules, %d\n", data.total_rules[g]);
+    printf(", after dim1, after dim2, after merge\n");
+    int range = 1;
     for (i = 0; i <= n; i++) {
+        if(i == 0) printf("1");
+        else if(i == n){
+            printf("≥%d", 1<<i);
+        }
+        else {
+            printf("%d-%d", 1<<i, (1<<i+1) - 1);
+        }
         printf(", %d, %d, %d\n", dis[0][i], dis[1][i], dis[2][i]);
     }
     printf("avg., %.2f, %.2f, %.2f\n", avg[0], avg[1], avg[2]);
     printf("max, %d, %d, %d\n", max[0], max[1], max[2]);
-    printf("\n=========================\n");
+    printf("\n\n");
 
     return;
 }
@@ -286,54 +301,63 @@ void show_duplication(char g) {
 void show_buckets_data() {
     int i;
 
+    printf("group, ");
     for (i = 0; i < 4; i++) {
         printf("%c(%d-bit), ", i + 'A', setting[i].bit1);
         printf("%c'(%d-bit), ", i + 'A', setting[i].bit2);
     }
     printf("\n");
 
+    printf("total rules, ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.total_rules[i]);
         printf("%d, ", data.total_rules[i + 4]);
     }
     printf("\n");
 
-    for (i = 0; i < 4; i++) {
-        printf("%d, ", data.dim1_roots[i]);
-        printf("%d, ", data.dim1_roots[i + 4]);
-    }
-    printf("\n");
-
+    printf("dim1 EIs, ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.dim1_buckets[i][0]);
         printf("%d, ", data.dim1_buckets[i + 4][0]);
     }
     printf("\n");
 
+    printf("dim1 EIs(shared), ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.dim1_buckets[i][1]);
         printf("%d, ", data.dim1_buckets[i + 4][1]);
     }
     printf("\n");
+ 
+    printf("Max # of rules in each dim2 tree, ");
+    for (i = 0; i < 4; i++) {
+        printf("%d, ", data.dim1_rules[i]);
+        printf("%d, ", data.dim1_rules[i + 4]);
+    }
+    printf("\n");
 
+    printf("dim2 EIs, ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.dim2_buckets[i][0]);
         printf("%d, ", data.dim2_buckets[i + 4][0]);
     }
     printf("\n");
 
+    printf("dim2 EIs(shared), ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.dim2_buckets[i][1]);
         printf("%d, ", data.dim2_buckets[i + 4][1]);
     }
     printf("\n");
 
+    printf("merge buckets, ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.merge_buckets[i]);
         printf("%d, ", data.merge_buckets[i + 4]);
     }
     printf("\n");
 
+    printf("buckets size, ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", data.bucket_size[i]);
         printf("%d, ", data.bucket_size[i + 4]);
@@ -341,7 +365,7 @@ void show_buckets_data() {
     printf("\n");
 
 
-    printf("\n=========================\n");
+    printf("\n\n");
     return;
 }
 
@@ -368,7 +392,7 @@ void show_nodes_count(char g) {
         total[1] += data.dim2_nodes[g][i];
     }
     printf("total, %d, %d\n", total[0], total[1]);
-    printf("\n=========================\n");
+    printf("\n\n");
     return;
 }
 
@@ -376,30 +400,35 @@ void show_memory_use() {
 
     int i;
 
+    printf("group, ");
     for (i = 0; i < 4; i++) {
         printf("%c(%d-bit), ", i + 'A', setting[i].bit1);
         printf("%c'(%d-bit), ", i + 'A', setting[i].bit2);
     }
     printf("\n");
 
+    printf("segmentation table, ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", memory_use.seg_table[i]);
         printf("%d, ", memory_use.seg_table[i + 4]);
     }
     printf("\n");
 
+    printf("dim1 ptr, ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", memory_use.total[i][0]);
         printf("%d, ", memory_use.total[i + 4][0]);
     }
     printf("\n");
 
+    printf("dim2 ptr, ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", memory_use.total[i][1]);
         printf("%d, ", memory_use.total[i + 4][1]);
     }
     printf("\n");
 
+    printf("buckets ptr, ");
     for (i = 0; i < 4; i++) {
         printf("%d, ", memory_use.bucket_ptr[i]);
         printf("%d, ", memory_use.bucket_ptr[i + 4]);
@@ -410,25 +439,25 @@ void show_memory_use() {
     printf("total(byte), %.0f\n", memory_use.sum_byte);
     printf("avg(per rule), %.02f\n", memory_use.byte_per_rule);
 
-    printf("\n=========================\n");
+    printf("\n\n");
     return;
 }
 
 void show_prefix_length(char g) {
-    
+
     int i;
     int srclen[10] = {0};
     int dstlen[10] = {0};
 
 
-    for(i=0; i<num_entry; i++) {
-        if(table[i].group != g) continue;
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group != g) continue;
 
         srclen[table[i].srclen]++;
         dstlen[table[i].dstlen]++;
     }
 
-    for(i=0; i<10; i++) {
+    for (i = 0; i < 10; i++) {
         printf("%d\t%d\t%d\n", i, srclen[i], dstlen[i]);
     }
 }

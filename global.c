@@ -32,6 +32,8 @@ void set(char *filename){
 		setting[i].rebuild = atoi(buf);
 		sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 		setting[i].ignore = atoi(buf);
+		sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
+		setting[i].dim1_only = atoi(buf);
 
 		i++;
 	}
@@ -46,6 +48,7 @@ void print_setting(){
 		printf("%d ", setting[i].change);
 		printf("%d ", setting[i].newID);
 		printf("%d ", setting[i].rebuild);
-		printf("%d\n", setting[i].ignore);
+		printf("%d ", setting[i].ignore);
+		printf("%d\n", setting[i].dim1_only);
 	}
 }

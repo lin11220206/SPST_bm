@@ -6,6 +6,7 @@ struct global_setting {
 	char newID;
 	char rebuild;
 	char ignore;
+	char dim1_only;
 };
 
 extern struct global_setting setting[4];

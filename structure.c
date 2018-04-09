@@ -24,7 +24,7 @@ struct ENTRY *table3;
 void rebuild() {
     int i, na, j, k, r;
 
-    printf("start rebuild ...\n");
+    //printf("start rebuild ...\n");
     int *count = calloc(num_entry , sizeof(int));
 
     for (i = 0; i < num_entry; i++)
@@ -113,7 +113,7 @@ void groupping() {
     int i, j, segment, g;
     unsigned int ip, len;
 
-    printf("start groupping ...\n");
+    //printf("start groupping ...\n");
 
     for (i = 0; i < 4; i++) {
         seg_bit[i] = setting[i].bit1;
@@ -157,7 +157,7 @@ void groupping() {
 void first_level() {
     int i, j, g, N, na, k, segment, ruleID;
 
-    printf("start computing first level ...\n");
+    //printf("start computing first level ...\n");
 
     for (i = 0; i < 8; i++) {
         for (na = 0; na < 65536; na++) {
@@ -266,7 +266,7 @@ void first_level() {
 void second_level() {
     int i, j, k, count, g, N, T, na;
 
-    printf("start computing second level ...\n");
+    //printf("start computing second level ...\n");
 
     unsigned int l, r, ip, l2, r2, ip2;
     int len, len2;
@@ -407,7 +407,7 @@ void convert() {
     }
 }
 void l1_bucket_share() {
-    printf("start l1_bucket_share ...\n");
+    //printf("start l1_bucket_share ...\n");
     int i, j, k, na;
     int N, ruleID;
 
@@ -450,7 +450,7 @@ void l1_bucket_share() {
     return;
 }
 void l2_bucket_share() {
-    printf("start l2_bucket_share ...\n");
+    //printf("start l2_bucket_share ...\n");
     int i, j, k, l, na;
     int N, ruleID;
 
@@ -495,18 +495,10 @@ void l2_bucket_share() {
     }*/
 }
 void bucket_merge() {
-    printf("start bucket_merge ...\n");
-    //qsort(uni_bucket, uni_num, sizeof(struct bucket *), cmp);
-
+    //printf("start bucket_merge ...\n");
 
     int i, j, k, l, na, g;
     int N, ruleID;
-    /*
-    for(i=0; i<150; i++){
-        printf("%d %p\n", i, uni_bucket[i]);
-    }*/
-    //sort();
-
     for (i = 0; i < 8; i++) {
         for (j = 0; j < 100000; j++) {
             merge_bucket[i][j].rule = (int *) calloc(thres2[i], sizeof(int));

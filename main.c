@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[]) {
     set(argv[2]);
-    print_setting();
+    //print_setting();
     set_table(argv[1]);
 
     groupping();
@@ -33,17 +33,21 @@ int main(int argc, char *argv[]) {
 
     int i;
 
+    printf("Duplication\n");
     for(i=0; i<4; i++) {
         show_duplication(i);
         show_duplication(i+4);
     }
 
     show_buckets_data();
+
+    printf("nodes level\n");
     for(i=0; i<4; i++) {
         show_nodes_count(i);
         show_nodes_count(i+4);
     }
 
+    printf("memory use\n");
     show_memory_use();
     
     return 0;
