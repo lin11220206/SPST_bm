@@ -284,10 +284,10 @@ void show_duplication(char g) {
     for (i = 0; i <= n; i++) {
         if(i == 0) printf("1");
         else if(i == n){
-            printf("≥%d", 1<<i);
+            printf(">=%d", 1<<i);
         }
         else {
-            printf("%d-%d", 1<<i, (1<<i+1) - 1);
+            printf("%d~%d", 1<<i, (1<<i+1) - 1);
         }
         printf(", %d, %d, %d\n", dis[0][i], dis[1][i], dis[2][i]);
     }
