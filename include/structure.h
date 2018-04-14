@@ -7,6 +7,7 @@ struct level1 {
 
 struct level2 {
     unsigned int *endpoint;
+    struct bucket *b0;
     struct bucket **b;
     int type;
     int *b_type;
@@ -19,17 +20,21 @@ struct bucket {
     int mergeID;
 };
 
-extern struct level1 gp[8][65536];
-extern int thres[8], thres2[8], thres3[8], count2[8], numcombine;
-extern int group[8][65536], groupp[8];
-extern int seg_bit[8];
-extern struct bucket *uni_bucket[500000];
-extern int uni_num;
-extern struct bucket merge_bucket[8][100000];
-extern int mrg_num[8];
+extern struct level1 gp[6][65536];
+extern struct bucket gp_A[4][4];
+extern int thres[6], thres2[6], numcombine;
+extern int thres_A;
+extern int group[6][65536], groupp[6];
+extern int seg_bit[6];
+extern struct bucket *uni_dim1_bucket[500000];
+extern struct bucket *uni_dim2_bucket[500000];
+extern int uni_num[2];
+extern struct bucket merge_bucket[6][100000];
+extern int mrg_num[6];
 extern struct ENTRY *table3;
 
 void groupping();
+void group_A();
 void first_level();
 void second_level();
 void convert();
@@ -38,5 +43,3 @@ void l2_bucket_share();
 void bucket_merge();
 void rebuild();
 int cmp(const void *, const void *);
-//void software_compress();
-void sort();

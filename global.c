@@ -3,7 +3,7 @@
 #include <string.h>
 #include "global.h" 
 
-struct global_setting setting[4];
+struct global_setting setting[3];
 
 void set(char *filename){
 	FILE *fp;
@@ -41,7 +41,7 @@ void set(char *filename){
 
 void print_setting(){
 	int i;
-	for(i=0; i<4; i++) {
+	for(i=0; i<3; i++) {
 		printf("%d ", setting[i].cut);
 		printf("%d ", setting[i].bit1);
 		printf("%d ", setting[i].bit2);

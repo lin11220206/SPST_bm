@@ -9,7 +9,7 @@ struct global_setting {
 	char dim1_only;
 };
 
-extern struct global_setting setting[4];
+extern struct global_setting setting[3];
 
 void set(char *);
 void print_setting();

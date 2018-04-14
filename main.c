@@ -12,12 +12,13 @@ int main(int argc, char *argv[]) {
     set_table(argv[1]);
 
     groupping();
+    group_A();
     first_level();
     second_level();
     l1_bucket_share();
     l2_bucket_share();
     
-    if(setting[0].rebuild || setting[1].rebuild || setting[2].rebuild || setting[3].rebuild) {
+    if(setting[0].rebuild || setting[1].rebuild || setting[2].rebuild) {
         rebuild();
         groupping();
         first_level();
@@ -34,17 +35,17 @@ int main(int argc, char *argv[]) {
     int i;
 
     printf("Duplication\n");
-    for(i=0; i<4; i++) {
+    for(i=0; i<3; i++) {
         show_duplication(i);
-        show_duplication(i+4);
+        show_duplication(i+3);
     }
 
     show_buckets_data();
 
     printf("nodes level\n");
-    for(i=0; i<4; i++) {
+    for(i=0; i<3; i++) {
         show_nodes_count(i);
-        show_nodes_count(i+4);
+        show_nodes_count(i+3);
     }
 
     printf("memory use\n");

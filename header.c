@@ -46,13 +46,13 @@ void read_table(char *str, int n) {
     }
 
     if(table[n].srclen < 5 && table[n].dstlen < 5)
-        table[n].group = 0;
+        table[n].group = -1;
     else if(table[n].srclen >= 5 && table[n].dstlen < 5)
-        table[n].group = 1;
+        table[n].group = 0;
     else if(table[n].srclen < 5 && table[n].dstlen >= 5)
-        table[n].group = 2;
+        table[n].group = 1;
     else if(table[n].srclen >= 5 && table[n].dstlen >= 5)
-        table[n].group = 3;
+        table[n].group = 2;
 
 	sprintf(buf, "%s%c", strtok(NULL, tok), '\0');
 	table[n].srcPort[0] = atoi(buf);
@@ -81,8 +81,8 @@ void read_table(char *str, int n) {
     }
     table[n].rule = -1;
 
-    if(table[n].srclen < setting[table[n].group].cut && table[n].group < 4)
-        table[n].group += 4;
+    if(table[n].srclen < setting[table[n].group].cut && table[n].group < 3 && table[n].group != -1)
+        table[n].group += 3;
 
 }
 
@@ -96,7 +96,7 @@ void set_table(char *file_name) {
 	}
 
 	rewind(fp);
-	table = (struct ENTRY *) malloc (num_entry * sizeof(struct ENTRY));
+	table = (struct ENTRY *) calloc (num_entry , sizeof(struct ENTRY));
 	num_entry = 0;
 
 	while(fgets(string, 100, fp) != NULL) {
