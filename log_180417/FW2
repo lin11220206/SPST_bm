@@ -1,0 +1,111 @@
+Duplication
+B(16-bit), , total rules, 59371
+, after dim1, after dim2, after merge
+1~1, 59371, 59371, 59371
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+B'(14-bit), , total rules, 5873
+, after dim1, after dim2, after merge
+1~1, 5851, 5316, 5618
+2~3, 22, 556, 255
+4~7, 0, 1, 0
+>=8avg., 1.00, 1.10, 1.04
+max, 3, 4, 2
+
+
+C(16-bit), , total rules, 12411
+, after dim1, after dim2, after merge
+1~1, 12411, 12411, 12411
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+C'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+D(16-bit), , total rules, 18288
+, after dim1, after dim2, after merge
+1~1, 18288, 18288, 18288
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+D'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+Group A
+total rules, 33,
+# of bucekts, 16
+bucket size, 18
+
+group, B(16-bit), B'(14-bit), C(16-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+total rules, 59371, 5873, 12411, 0, 18288, 0, 
+dim1 EIs, 59371, 4766, 12411, 0, 18288, 0, 
+dim1 EIs(shared), 59371, 4750, 12411, 0, 18288, 0, 
+Max # of rules in each dim2 tree, 1, 5, 1, 0, 1, 0, 
+dim2 EIs, 67680, 5735, 14066, 0, 36576, 0, 
+dim2 EIs(shared), 59371, 5210, 12411, 0, 18288, 0, 
+merge buckets, 26, 47, 3, 0, 24, 0, 
+buckets size, 1, 5, 1, 0, 1, 0, 
+
+
+nodes level
+B(16-bit)
+level 0, 22207, 59371
+level 1, 25305, 0
+level 2, 9819, 0
+level 3, 2021, 0
+level 4, 19, 0
+total, 59371, 59371
+
+
+B'(14-bit)
+level 0, 4359, 4750
+level 1, 325, 0
+level 2, 2, 0
+total, 4686, 4750
+
+
+C(16-bit)
+level 0, 12411, 12411
+level 1, 0, 121
+total, 12411, 12532
+
+
+C'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+D(16-bit)
+level 0, 18288, 18288
+level 1, 0, 18288
+total, 18288, 36576
+
+
+D'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+memory use
+group, B(16-bit), B'(14-bit), C(16-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+segmentation table, 983040, 212992, 917504, 0, 983040, 0, 
+dim1 ptr, 3774039, 259798, 595728, 0, 896112, 0, 
+dim2 ptr, 0, 223250, 0, 0, 0, 0, 
+buckets ptr, 356226, 57310, 37233, 0, 109728, 0, 
+total(bit), 9406000
+total(byte), 1175750
+avg(per rule), 12.25
+
+

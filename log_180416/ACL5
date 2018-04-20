@@ -1,0 +1,114 @@
+Duplication
+B(16-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+B'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+C(16-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+C'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+D(16-bit), , total rules, 30003
+, after dim1, after dim2, after merge
+1~1, 30003, 30003, 30003
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+D'(16-bit), , total rules, 67852
+, after dim1, after dim2, after merge
+1~1, 31838, 50663, 61949
+2~3, 21984, 15303, 5841
+4~7, 14014, 1794, 62
+8~15, 16, 68, 0
+16~31, 0, 24, 0
+>=32avg., 2.20, 1.38, 1.10
+max, 8, 19, 7
+
+
+Group A
+total rules, 0,
+# of bucekts, 0
+bucket size, 0
+
+group, B(16-bit), B'(0-bit), C(16-bit), C'(0-bit), D(16-bit), D'(16-bit), 
+total rules, 0, 0, 0, 0, 30003, 67852, 
+dim1 EIs, 0, 0, 0, 0, 30003, 25035, 
+dim1 EIs(shared), 0, 0, 0, 0, 30003, 25035, 
+Max # of rules in each dim2 tree, 0, 0, 0, 0, 1, 68, 
+dim2 EIs, 0, 0, 0, 0, 60005, 197646, 
+dim2 EIs(shared), 0, 0, 0, 0, 30003, 55037, 
+merge buckets, 0, 0, 0, 0, 77, 119, 
+buckets size, 0, 0, 0, 0, 1, 17, 
+
+
+nodes level
+B(16-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+B'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+C(16-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+C'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+D(16-bit)
+level 0, 10833, 30003
+level 1, 12049, 30002
+level 2, 6442, 0
+level 3, 678, 0
+level 4, 1, 0
+total, 30003, 60005
+
+
+D'(16-bit)
+level 0, 6441, 25035
+level 1, 11091, 45048
+level 2, 7487, 61236
+level 3, 16, 50225
+level 4, 0, 15641
+level 5, 0, 450
+total, 25035, 197635
+
+
+memory use
+group, B(16-bit), B'(0-bit), C(16-bit), C'(0-bit), D(16-bit), D'(16-bit), 
+segmentation table, 0, 0, 0, 0, 917504, 851968, 
+dim1 ptr, 0, 0, 0, 0, 1842866, 1491020, 
+dim2 ptr, 0, 0, 0, 0, 0, 12826773, 
+buckets ptr, 0, 0, 0, 0, 240024, 1320888, 
+total(bit), 19491043
+total(byte), 2436380
+avg(per rule), 24.90
+
+

@@ -1,0 +1,108 @@
+Duplication
+B(16-bit), , total rules, 2218
+, after dim1, after dim2, after merge
+1~1, 2218, 2218, 2218
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+B'(8-bit), , total rules, 70
+, after dim1, after dim2, after merge
+1~1, 66, 66, 67
+2~3, 4, 4, 3
+>=4avg., 1.06, 1.06, 1.04
+max, 2, 2, 2
+
+
+C(8-bit), , total rules, 5599
+, after dim1, after dim2, after merge
+1~1, 5599, 5599, 5599
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+C'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+D(16-bit), , total rules, 1351
+, after dim1, after dim2, after merge
+1~1, 1351, 1351, 1351
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+D'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+Group A
+total rules, 73,
+# of bucekts, 16
+bucket size, 73
+
+group, B(16-bit), B'(8-bit), C(8-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+total rules, 2218, 70, 5599, 0, 1351, 0, 
+dim1 EIs, 2218, 72, 5599, 0, 1351, 0, 
+dim1 EIs(shared), 2218, 68, 5599, 0, 1351, 0, 
+Max # of rules in each dim2 tree, 1, 2, 1, 0, 1, 0, 
+dim2 EIs, 2218, 72, 5599, 0, 2702, 0, 
+dim2 EIs(shared), 2218, 68, 5599, 0, 1351, 0, 
+merge buckets, 105, 4, 168, 0, 151, 0, 
+buckets size, 1, 2, 1, 0, 1, 0, 
+
+
+nodes level
+B(16-bit)
+level 0, 2218, 2218
+total, 2218, 2218
+
+
+B'(8-bit)
+level 0, 60, 68
+level 1, 12, 0
+total, 72, 68
+
+
+C(8-bit)
+level 0, 237, 5599
+level 1, 474, 0
+level 2, 948, 0
+level 3, 1871, 0
+level 4, 2069, 0
+total, 5599, 5599
+
+
+C'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+D(16-bit)
+level 0, 1351, 1351
+level 1, 0, 1351
+total, 1351, 2702
+
+
+D'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+memory use
+group, B(16-bit), B'(8-bit), C(8-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+segmentation table, 786432, 1536, 2048, 0, 720896, 0, 
+dim1 ptr, 102028, 3192, 302906, 0, 60795, 0, 
+dim2 ptr, 102028, 2788, 263153, 0, 136451, 0, 
+buckets ptr, 17744, 272, 50391, 0, 12159, 0, 
+total(bit), 2564819
+total(byte), 320602
+avg(per rule), 34.43
+
+

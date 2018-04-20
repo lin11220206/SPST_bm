@@ -36,12 +36,11 @@ void rebuild() {
         for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
             for (j = 1; j < N; j++) {
-                for (k = 1; k < gp[i][na].lv2[j].n; k++) {
-                    if (gp[i][na].lv2[j].b_type[k] != 1) continue;
-                    for (r = 0; r < gp[i][na].lv2[j].b[k]->r; r++) {
-                        ruleID = gp[i][na].lv2[j].b[k]->rule[r];
+                if (gp[i][na].lv2[j].type != 1) continue;
 
-                        count[ruleID]++;
+                if (gp[i][na].lv2[j].b0->r > 1) {
+                    for (k = 1; k < gp[i][na].lv2[j].b0->r; k++) {
+                        count[gp[i][na].lv2[j].b0->rule[k]]++;
                     }
                 }
             }
@@ -49,7 +48,7 @@ void rebuild() {
     }
 
     for (i = 0; i < num_entry; i++) {
-        if (count[i] > 1 && table[i].group < 3 && setting[table[i].group].rebuild) {
+        if (count[i] > 0 && table[i].group < 3 && setting[table[i].group].rebuild) {
             table[i].group += 3;
         }
     }

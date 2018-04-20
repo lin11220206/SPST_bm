@@ -1,0 +1,141 @@
+Duplication
+B(16-bit), , total rules, 12605
+, after dim1, after dim2, after merge
+1~1, 12605, 12605, 12605
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+B'(6-bit), , total rules, 6964
+, after dim1, after dim2, after merge
+1~1, 1362, 514, 6964
+2~3, 209, 864, 0
+4~7, 2672, 274, 0
+8~15, 1986, 1656, 0
+16~31, 735, 2358, 0
+32~63, 0, 1266, 0
+64~127, 0, 32, 0
+>=128avg., 7.61, 18.58, 1.00
+max, 25, 72, 1
+
+
+C(16-bit), , total rules, 58779
+, after dim1, after dim2, after merge
+1~1, 58779, 58779, 58779
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+C'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+D(16-bit), , total rules, 2616
+, after dim1, after dim2, after merge
+1~1, 2616, 2616, 2616
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+D'(0-bit), , total rules, 1443
+, after dim1, after dim2, after merge
+1~1, 0, 1443, 1443
+2~3, 94, 0, 0
+4~7, 219, 0, 0
+8~15, 222, 0, 0
+16~31, 323, 0, 0
+32~63, 585, 0, 0
+>=64avg., 24.78, 1.00, 1.00
+max, 55, 1, 1
+
+
+Group A
+total rules, 1035,
+# of bucekts, 16
+bucket size, 573
+
+group, B(16-bit), B'(6-bit), C(16-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+total rules, 12605, 6964, 58779, 0, 2616, 1443, 
+dim1 EIs, 12605, 931, 58779, 0, 2616, 57, 
+dim1 EIs(shared), 12605, 839, 58779, 0, 2616, 57, 
+Max # of rules in each dim2 tree, 1, 460, 1, 0, 1, 1443, 
+dim2 EIs, 15156, 2050, 69857, 0, 5232, 71446, 
+dim2 EIs(shared), 12605, 1793, 58779, 0, 2616, 1443, 
+merge buckets, 15, 1, 109, 0, 72, 70, 
+buckets size, 1, 15, 1, 0, 1, 1, 
+
+
+nodes level
+B(16-bit)
+level 0, 1181, 12605
+level 1, 1324, 0
+level 2, 1603, 0
+level 3, 1980, 0
+level 4, 2281, 0
+level 5, 2464, 0
+level 6, 1592, 0
+level 7, 180, 0
+total, 12605, 12605
+
+
+B'(6-bit)
+level 0, 64, 839
+level 1, 86, 339
+level 2, 172, 0
+level 3, 322, 0
+level 4, 284, 0
+level 5, 2, 0
+total, 930, 1178
+
+
+C(16-bit)
+level 0, 31439, 58779
+level 1, 27340, 1363
+total, 58779, 60142
+
+
+C'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+D(16-bit)
+level 0, 591, 2616
+level 1, 561, 2616
+level 2, 568, 0
+level 3, 500, 0
+level 4, 361, 0
+level 5, 35, 0
+total, 2616, 5232
+
+
+D'(0-bit)
+level 0, 1, 57
+level 1, 2, 114
+level 2, 4, 222
+level 3, 8, 433
+level 4, 16, 853
+level 5, 26, 1690
+level 6, 0, 3311
+level 7, 0, 6380
+level 8, 0, 12199
+level 9, 0, 19653
+level 10, 0, 23234
+level 11, 0, 3300
+total, 57, 71446
+
+
+memory use
+group, B(16-bit), B'(6-bit), C(16-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+segmentation table, 720896, 384, 983040, 0, 655360, 0, 
+dim1 ptr, 741200, 46786, 3410535, 0, 143634, 2409, 
+dim2 ptr, 0, 60561, 0, 0, 0, 4141323, 
+buckets ptr, 63025, 26895, 470232, 0, 20928, 11544, 
+total(bit), 11498752
+total(byte), 1437344
+avg(per rule), 17.23
+
+

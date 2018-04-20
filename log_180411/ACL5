@@ -1,0 +1,111 @@
+Duplication
+B(16-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+B'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+C(16-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+C'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+D(16-bit), , total rules, 97855
+, after dim1, after dim2, after merge
+1~1, 83095, 92614, 95621
+2~3, 8997, 4524, 2153
+4~7, 5281, 679, 81
+8~15, 481, 37, 0
+16~31, 1, 1, 0
+>=32avg., 1.38, 1.08, 1.03
+max, 16, 16, 7
+
+
+D'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+Group A
+total rules, 0,
+# of bucekts, 0
+bucket size, 0
+
+group, B(16-bit), B'(0-bit), C(16-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+total rules, 0, 0, 0, 0, 97855, 0, 
+dim1 EIs, 0, 0, 0, 0, 86888, 0, 
+dim1 EIs(shared), 0, 0, 0, 0, 74664, 0, 
+Max # of rules in each dim2 tree, 0, 0, 0, 0, 23, 0, 
+dim2 EIs, 0, 0, 0, 0, 262269, 0, 
+dim2 EIs(shared), 0, 0, 0, 0, 91453, 0, 
+merge buckets, 0, 0, 0, 0, 107, 0, 
+buckets size, 0, 0, 0, 0, 11, 0, 
+
+
+nodes level
+B(16-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+B'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+C(16-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+C'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+D(16-bit)
+level 0, 12819, 74664
+level 1, 18563, 104443
+level 2, 24755, 48338
+level 3, 23720, 6912
+level 4, 6819, 315
+level 5, 212, 0
+total, 86888, 234672
+
+
+D'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+memory use
+group, B(16-bit), B'(0-bit), C(16-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+segmentation table, 0, 0, 0, 0, 917504, 0, 
+dim1 ptr, 0, 0, 0, 0, 5636255, 0, 
+dim2 ptr, 0, 0, 0, 0, 15599250, 0, 
+buckets ptr, 0, 0, 0, 0, 1646154, 0, 
+group A use, 0
+total(bit), 23799163
+total(byte), 2974895
+avg(per rule), 30.40
+
+

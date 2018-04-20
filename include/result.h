@@ -45,12 +45,4 @@ void show_nodes_count(char);
 void show_memory_use();
 
 void show_prefix_length(char);
-
-void level1_duplication(int);
-void level2_duplication(int);
-void merge_duplication(int);
-void merge_duplication2(int);
-void node_count(char);
-void result1(char);
-void result2(int);
-void result3(char);
+void show_buckets(char);

@@ -1,0 +1,100 @@
+Duplication
+B(16-bit), , total rules, 11050
+, after dim1, after dim2, after merge
+1~1, 11050, 11050, 11050
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+B'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+C(16-bit), , total rules, 52443
+, after dim1, after dim2, after merge
+1~1, 52443, 52443, 52443
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+C'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+D(16-bit), , total rules, 36507
+, after dim1, after dim2, after merge
+1~1, 36507, 36507, 36507
+>=2avg., 1.00, 1.00, 1.00
+max, 1, 1, 1
+
+
+D'(0-bit), , total rules, 0
+, after dim1, after dim2, after merge
+1~1, 0, 0, 0
+>=2avg., 0.00, 0.00, 0.00
+max, 0, 0, 0
+
+
+group, B(16-bit), B'(0-bit), C(16-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+total rules, 11050, 0, 52443, 0, 36507, 0, 
+dim1 EIs, 11050, 0, 52443, 0, 36507, 0, 
+dim1 EIs(shared), 11050, 0, 52443, 0, 36507, 0, 
+Max # of rules in each dim2 tree, 1, 0, 1, 0, 1, 0, 
+dim2 EIs, 14778, 0, 62470, 0, 73014, 0, 
+dim2 EIs(shared), 11050, 0, 52443, 0, 36507, 0, 
+merge buckets, 2, 0, 2, 0, 8, 0, 
+buckets size, 1, 0, 1, 0, 1, 0, 
+
+
+nodes level
+B(16-bit)
+level 0, 10266, 11050
+level 1, 784, 470
+total, 11050, 11520
+
+
+B'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+C(16-bit)
+level 0, 16233, 52443
+level 1, 27053, 1089
+level 2, 9157, 0
+total, 52443, 53532
+
+
+C'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+D(16-bit)
+level 0, 27816, 36507
+level 1, 8691, 36507
+total, 36507, 73014
+
+
+D'(0-bit)
+level 0, 0, 0
+total, 0, 0
+
+
+memory use
+group, B(16-bit), B'(0-bit), C(16-bit), C'(0-bit), D(16-bit), D'(0-bit), 
+segmentation table, 917504, 0, 917504, 0, 983040, 0, 
+dim1 ptr, 633060, 0, 3244387, 0, 2214774, 0, 
+dim2 ptr, 652410, 0, 3253473, 0, 4234812, 0, 
+buckets ptr, 22100, 0, 104886, 0, 146028, 0, 
+total(bit), 17323978
+total(byte), 2165497
+avg(per rule), 21.65
+
+

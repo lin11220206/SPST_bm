@@ -10,13 +10,21 @@ int main(int argc, char *argv[]) {
     set(argv[2]);
     //print_setting();
     set_table(argv[1]);
+    /*show_prefix_length(-1);
+    show_prefix_length(0);
+    show_prefix_length(1);
+    show_prefix_length(2);*/
 
+    
     groupping();
     group_A();
     first_level();
     second_level();
     l1_bucket_share();
     l2_bucket_share();
+
+    //show_buckets(2);
+    
     
     if(setting[0].rebuild || setting[1].rebuild || setting[2].rebuild) {
         rebuild();

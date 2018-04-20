@@ -21,16 +21,16 @@ void get_result() {
     data_A.buckets = 0;
     data_A.bucket_size = 0;
 
-    for(i=0; i<num_entry; i++) {
-        if(table[i].group != -1) continue;
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group != -1) continue;
 
         data_A.total_rules++;
     }
     data_A.bucket_size = thres_A;
 
-    for(i=0; i<4; i++){
-        for(j=0; j<4; j++) {
-            if(gp_A[i][j].r > 0) data_A.buckets++;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (gp_A[i][j].r > 0) data_A.buckets++;
         }
     }
 
@@ -206,7 +206,7 @@ void compute_memory_use() {
     memory_use.sum_byte = 0;
     memory_use.byte_per_rule = 0;
 
-    memory_use.group_A_use = data.group_A_buckets * (ceil_log2(thres_A));
+    memory_use.group_A_use = data_A.buckets * (ceil_log2(data_A.bucket_size));
 
     for (g = 0; g < 6; g++) {
         if (g < 3) bit = setting[g].bit1;
@@ -235,6 +235,8 @@ void compute_memory_use() {
 
         memory_use.dim1_node_ptr[g][i] = data.dim1_nodes[g][i] * (ceil_log2(data.dim1_buckets[g][1]) + 32 + 2);
 
+        if(g < 3 && setting[g].rebuild) continue;
+
         for (i = 0; i < n2; i++) {
             memory_use.dim2_node_ptr[g][i] = data.dim2_nodes[g][i] * (ceil_log2(data.dim2_nodes[g][i + 1]) + ceil_log2(data.dim2_buckets[g][1]) + 32 + 2);
         }
@@ -245,15 +247,17 @@ void compute_memory_use() {
     for (g = 0; g < 6; g++) {
         for (i = 0; i < 20; i++) {
             memory_use.sum_bit += memory_use.dim1_node_ptr[g][i];
-            memory_use.sum_bit += memory_use.dim2_node_ptr[g][i];
-
             memory_use.total[g][0] += memory_use.dim1_node_ptr[g][i];
+
+            if(g < 3 && setting[g].rebuild) continue;
+            
+            memory_use.sum_bit += memory_use.dim2_node_ptr[g][i];
             memory_use.total[g][1] += memory_use.dim2_node_ptr[g][i];
         }
         memory_use.sum_bit += memory_use.bucket_ptr[g];
         memory_use.sum_bit += memory_use.seg_table[g];
     }
-    memory_use.sum_bit += memory_use.group_A_use;
+    //memory_use.sum_bit += memory_use.group_A_use;
 
     memory_use.sum_byte = memory_use.sum_bit / 8;
     memory_use.byte_per_rule = memory_use.sum_byte / num_entry;
@@ -467,7 +471,7 @@ void show_memory_use() {
     }
     printf("\n");
 
-    printf("group A use, %d\n", memory_use.group_A_use);
+    //printf("group A use, %d\n", memory_use.group_A_use);
     printf("total(bit), %d\n", memory_use.sum_bit);
     printf("total(byte), %.0f\n", memory_use.sum_byte);
     printf("avg(per rule), %.02f\n", memory_use.byte_per_rule);
@@ -479,18 +483,54 @@ void show_memory_use() {
 void show_prefix_length(char g) {
 
     int i;
-    int srclen[10] = {0};
-    int dstlen[10] = {0};
+    int srclen[33] = {0};
+    int dstlen[33] = {0};
 
+    int count = 0;
 
     for (i = 0; i < num_entry; i++) {
         if (table[i].group != g) continue;
 
+        count++;
         srclen[table[i].srclen]++;
         dstlen[table[i].dstlen]++;
     }
 
-    for (i = 0; i < 10; i++) {
+    printf("total rules: %d\n", count);
+    for (i = 0; i < 33; i++) {
         printf("%d\t%d\t%d\n", i, srclen[i], dstlen[i]);
     }
+
+    printf("\n=================\n");
+}
+
+void show_buckets(char g) {
+    int i, j, k , na, N, ruleID;
+
+    if (g == 0) return;
+
+    int count[num_entry];
+
+    for (i = 0; i < num_entry; i++) {
+        count[i] = 0;
+    }
+
+    for (na = 0; na < 65536; na++) {
+        N = gp[g][na].n;
+
+        for (j = 1; j < N; j++) {
+            if (gp[g][na].lv2[j].type != 1) continue;
+            if (gp[g][na].lv2[j].r > 1) {
+                for (i = 0; i < gp[g][na].lv2[j].r; i++) {
+                    ruleID = gp[g][na].lv2[j].rule[i];
+
+                    printf("%d ", ruleID + 1);
+                }
+                printf("\n");
+            }
+        }
+    }
+
+    return;
+
 }

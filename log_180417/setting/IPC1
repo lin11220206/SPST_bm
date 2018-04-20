@@ -1,0 +1,4 @@
+@cut bit1 bit2 change newID rebuild ignore
+16 16 14 0 0 1 0
+16 16 14 1 0 1 0
+16 16 13 0 0 1 0
