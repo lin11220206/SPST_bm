@@ -21,6 +21,24 @@ int mrg_num[6] = {0};
 
 struct ENTRY *table3;
 
+void pre_rebuild() {
+    int i;
+    for (i=0; i<num_entry; i++) {
+        if(table[i].dstlen < 16) {
+            table[i].dstIP = table[i].dstIP ^ table[i].srcIP;
+            table[i].srcIP = table[i].dstIP ^ table[i].srcIP;
+            table[i].dstIP = table[i].dstIP ^ table[i].srcIP;
+
+            table[i].dstlen = table[i].dstlen ^ table[i].srclen;
+            table[i].srclen = table[i].dstlen ^ table[i].srclen;
+            table[i].dstlen = table[i].dstlen ^ table[i].srclen;
+
+            table[i].group = 0;
+        }
+    }
+    return;
+}
+
 void rebuild() {
     int i, na, j, k, r;
 
@@ -38,20 +56,48 @@ void rebuild() {
             for (j = 1; j < N; j++) {
                 if (gp[i][na].lv2[j].type != 1) continue;
 
-                if (gp[i][na].lv2[j].b0->r > 1) {
-                    for (k = 1; k < gp[i][na].lv2[j].b0->r; k++) {
-                        count[gp[i][na].lv2[j].b0->rule[k]]++;
-                    }
+                for(k=0; k<gp[i][na].lv2[j].b0->r; k++) {
+                    count[gp[i][na].lv2[j].b0->rule[k]]++;
                 }
             }
         }
     }
 
-    for (i = 0; i < num_entry; i++) {
-        if (count[i] > 0 && table[i].group < 3 && setting[table[i].group].rebuild) {
-            table[i].group += 3;
+    int sum;
+    for (i=0; i<3; i++) {
+        if(!setting[i].rebuild) continue;
+        for(na = 0; na < 65536; na++) {
+            N = gp[i][na].n;
+            for(j=1; j<N; j++) {
+                if(gp[i][na].lv2[j].type != 1) continue;
+
+                sum = 0;
+                for(k=0; k<gp[i][na].lv2[j].b0->r; k++) {
+                    if(table[gp[i][na].lv2[j].b0->rule[k]].group > 2) sum++;
+                }
+
+                while( gp[i][na].lv2[j].b0->r - sum > 1) {
+                    sum++;
+
+                    int MaxID;
+                    int MaxValue = 0;
+
+                    for(k=0; k<gp[i][na].lv2[j].b0->r; k++) {
+                        ruleID = gp[i][na].lv2[j].b0->rule[k];
+                        if(table[ruleID].group > 2) continue;
+
+                        if(count[ruleID] > MaxValue) {
+                            MaxID = ruleID;
+                            MaxValue = count[ruleID];
+                        }
+                    }
+                    table[MaxID].group += 3;
+                }
+
+            }
         }
     }
+
     //reset all extra memory
     /*
     for (i = 0; i < 8; i++) {

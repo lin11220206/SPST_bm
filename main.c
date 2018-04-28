@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     show_prefix_length(1);
     show_prefix_length(2);*/
 
-    
+    pre_rebuild();
     groupping();
     group_A();
     first_level();
