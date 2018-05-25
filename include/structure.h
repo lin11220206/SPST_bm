@@ -22,6 +22,7 @@ struct bucket {
 
 extern struct level1 gp[6][65536];
 extern struct bucket gp_A[4][4];
+extern struct level1 gp_AA;
 extern int thres[6], thres2[6], numcombine;
 extern int thres_A;
 extern int group[6][65536], groupp[6];
@@ -33,8 +34,10 @@ extern struct bucket merge_bucket[6][100000];
 extern int mrg_num[6];
 extern struct ENTRY *table3;
 
+void analysis();
 void groupping();
 void group_A();
+void group_AA();
 void first_level();
 void second_level();
 void convert();

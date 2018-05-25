@@ -9,6 +9,7 @@
 
 struct level1 gp[6][65536];
 struct bucket gp_A[4][4];
+struct level1 gp_AA;
 int thres[6], thres2[6], numcombine;
 int thres_A;
 int group[6][65536], groupp[6];
@@ -21,10 +22,68 @@ int mrg_num[6] = {0};
 
 struct ENTRY *table3;
 
+void analysis() {
+    struct ENTRY *table_1;
+    struct ENTRY *table_2;
+
+    int i, j, k;
+    int N1 = 0;
+    int N2 = 0;
+    int NN1 = 0;
+    int NN2 = 0;
+    int total = 0;
+
+    table_1 = (struct ENTRY *) calloc(10000, sizeof(struct ENTRY));
+    table_2 = (struct ENTRY *) calloc(10000, sizeof(struct ENTRY));
+
+    for(i=0; i<num_entry; i++) {
+        if(table[i].group != -1) continue;
+
+        total++;
+
+        if(table[i].srcPort[0] == 0 && table[i].srcPort[1] == 65535)
+            NN1++;
+
+        if(table[i].dstPort[0] == 0 && table[i].dstPort[1] == 65535)
+            NN2++;
+
+        for(j=0; j<N1; j++) {
+            if(table[i].srcPort[0] == table_1[j].srcPort[0] && table[i].srcPort[1] == table_1[j].srcPort[1]) {
+                break;
+            }
+        }
+        if(j == N1) {
+            table_1[j].srcPort[0] = table[i].srcPort[0];
+            table_1[j].srcPort[1] = table[i].srcPort[1];
+
+            N1++;
+        }
+
+        for(j=0; j<N2; j++) {
+            if(table[i].dstPort[0] == table_2[j].dstPort[0] && table[i].dstPort[1] == table_2[j].dstPort[1]) {
+                break;
+            }
+        }
+        if(j == N2) {
+            table_2[j].dstPort[0] = table[i].dstPort[0];
+            table_2[j].dstPort[1] = table[i].dstPort[1];
+
+            N2++;
+        }
+    }
+
+    printf("total, %d\n", total);
+    printf("srcPort, dstPort\n");
+    printf("%d, %d\n", N1, N2);
+    printf("%d, %d\n", NN1, NN2);
+
+    return;
+}
+
 void pre_rebuild() {
     int i;
-    for (i=0; i<num_entry; i++) {
-        if(table[i].dstlen < 16) {
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].dstlen < 16) {
             table[i].dstIP = table[i].dstIP ^ table[i].srcIP;
             table[i].srcIP = table[i].dstIP ^ table[i].srcIP;
             table[i].dstIP = table[i].dstIP ^ table[i].srcIP;
@@ -56,7 +115,7 @@ void rebuild() {
             for (j = 1; j < N; j++) {
                 if (gp[i][na].lv2[j].type != 1) continue;
 
-                for(k=0; k<gp[i][na].lv2[j].b0->r; k++) {
+                for (k = 0; k < gp[i][na].lv2[j].b0->r; k++) {
                     count[gp[i][na].lv2[j].b0->rule[k]]++;
                 }
             }
@@ -64,29 +123,29 @@ void rebuild() {
     }
 
     int sum;
-    for (i=0; i<3; i++) {
-        if(!setting[i].rebuild) continue;
-        for(na = 0; na < 65536; na++) {
+    for (i = 0; i < 3; i++) {
+        if (!setting[i].rebuild) continue;
+        for (na = 0; na < 65536; na++) {
             N = gp[i][na].n;
-            for(j=1; j<N; j++) {
-                if(gp[i][na].lv2[j].type != 1) continue;
+            for (j = 1; j < N; j++) {
+                if (gp[i][na].lv2[j].type != 1) continue;
 
                 sum = 0;
-                for(k=0; k<gp[i][na].lv2[j].b0->r; k++) {
-                    if(table[gp[i][na].lv2[j].b0->rule[k]].group > 2) sum++;
+                for (k = 0; k < gp[i][na].lv2[j].b0->r; k++) {
+                    if (table[gp[i][na].lv2[j].b0->rule[k]].group > 2) sum++;
                 }
 
-                while( gp[i][na].lv2[j].b0->r - sum > 1) {
+                while ( gp[i][na].lv2[j].b0->r - sum > 1) {
                     sum++;
 
                     int MaxID;
                     int MaxValue = 0;
 
-                    for(k=0; k<gp[i][na].lv2[j].b0->r; k++) {
+                    for (k = 0; k < gp[i][na].lv2[j].b0->r; k++) {
                         ruleID = gp[i][na].lv2[j].b0->rule[k];
-                        if(table[ruleID].group > 2) continue;
+                        if (table[ruleID].group > 2) continue;
 
-                        if(count[ruleID] > MaxValue) {
+                        if (count[ruleID] > MaxValue) {
                             MaxID = ruleID;
                             MaxValue = count[ruleID];
                         }
@@ -257,6 +316,560 @@ void group_A() {
                 gp_A[j][k].rule[gp_A[j][k].r++] = i;
             }
     }
+}
+
+void group_AA() {
+    int i, j, k, l, r, ruleID;
+    int t1 = 0, t2 = 0;
+    int total = 0;
+
+    for(i=0; i<num_entry;i++) {
+        if(table[i].group != -1) continue;
+
+        if(1) continue;
+
+        printf("%d, ", i);
+        printf("%X/%d, ",table[i].srcIP, table[i].srclen);
+        printf("%X/%d, ",table[i].dstIP, table[i].dstlen);
+        printf("%d-%d, ",table[i].srcPort[0], table[i].srcPort[1]);
+        printf("%d-%d, ",table[i].dstPort[0], table[i].dstPort[1]);
+        printf("%d\n", table[i].proto);
+
+    }
+
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group == -1) total++;
+    }
+
+    gp_AA.endpoint = (unsigned int *) calloc(total * 2 + 1, sizeof(unsigned int));
+    gp_AA.lv2 = (struct level2 *) calloc(total * 2 + 1, sizeof(struct level2));
+    gp_AA.n1 = (int *) calloc(total * 2 + 1, sizeof(int));
+    gp_AA.n = 1;
+
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group != -1) continue;
+
+        l = table[i].srcPort[0];
+        r = table[i].srcPort[1];
+
+        l = (l == 0) ? 0 : l - 1;
+
+        add_endpoint(gp_AA.endpoint, &gp_AA.n, l, r);
+    }
+
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group != -1) continue;
+
+        l = table[i].srcPort[0];
+        r = table[i].srcPort[1];
+
+        for (j = 1; j < gp_AA.n; j++) {
+            if ( l <= gp_AA.endpoint[j]) break;
+        }
+
+        for (; j < gp_AA.n; j++) {
+            gp_AA.n1[j]++;
+
+            if (gp_AA.endpoint[j] >= r) break;
+        }
+    }
+
+    for (i = 1; i < gp_AA.n; i++) {
+        if (gp_AA.n1[i] > t1) t1 = gp_AA.n1[i];
+    }
+
+    for (i = 0; i < gp_AA.n; i++) {
+        if (gp_AA.n1[i] == 0) continue;
+
+        gp_AA.lv2[i].endpoint = (unsigned int *) calloc (gp_AA.n1[i] * 2 + 1, sizeof(unsigned int));
+        gp_AA.lv2[i].n2 = (int *) calloc (gp_AA.n1[i] * 2 + 1, sizeof(int));
+        gp_AA.lv2[i].b = (struct bucket **) calloc (gp_AA.n1[i] * 2 + 1, sizeof(struct bucket *));
+        gp_AA.lv2[i].b_type = (unsigned int *) calloc(gp_AA.n1[i] * 2 + 1, sizeof(unsigned int));
+        gp_AA.lv2[i].n = 1;
+        gp_AA.lv2[i].rule = (int *) calloc(gp_AA.n1[i], sizeof(int));
+        gp_AA.lv2[i].r = 0;
+        gp_AA.lv2[i].b0 = (struct bucket *) calloc(1, sizeof(struct bucket));
+        gp_AA.lv2[i].type = 1;
+
+        gp_AA.lv2[i].b0->rule = calloc(gp_AA.n1[i], sizeof(int));
+
+        for (j = 0; j < gp_AA.n1[i] * 2 + 1; j++) {
+            gp_AA.lv2[i].b[j] = (struct bucket *) calloc(1, sizeof(struct bucket));
+            gp_AA.lv2[i].b_type[j] = 1;
+        }
+    }    //Finish level1
+
+    int l1, r1;
+    int l2, r2;
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group != -1) continue;
+
+        l1 = table[i].srcPort[0];
+        r1 = table[i].srcPort[1];
+
+        l2 = table[i].dstPort[0];
+        r2 = table[i].dstPort[1];
+
+        l2 = (l2 == 0) ? 0 : l2 - 1;
+
+        for (j = 1; j < gp_AA.n; j++) {
+            if ( l1 <= gp_AA.endpoint[j]) break;
+        }
+
+        for (; j < gp_AA.n; j++) {
+
+            gp_AA.lv2[j].rule[gp_AA.lv2[j].r++] = i;
+            gp_AA.lv2[j].b0->rule[gp_AA.lv2[j].b0->r++] = i;
+
+            add_endpoint(gp_AA.lv2[j].endpoint, &gp_AA.lv2[j].n, l2, r2);
+
+            if (gp_AA.endpoint[j] >= r1) break;
+        }
+    }
+
+    for (i = 1; i < gp_AA.n; i++) {
+        for (j = 0; j < gp_AA.lv2[i].r; j++) {
+            ruleID = gp_AA.lv2[i].rule[j];
+
+            l = table[ruleID].dstPort[0];
+            r = table[ruleID].dstPort[1];
+
+            for (k = 1; k < gp_AA.lv2[i].n; k++) {
+                if ( l <= gp_AA.lv2[i].endpoint[k]) break;
+            }
+
+            for (; k < gp_AA.lv2[i].n; k++) {
+
+                gp_AA.lv2[i].n2[k]++;
+
+                if (gp_AA.lv2[i].endpoint[k] >= r) break;
+            }
+        }
+    }
+
+    for (i = 1; i < gp_AA.n; i++) {
+        for (j = 1; j < gp_AA.lv2[i].n; j++) {
+            if (gp_AA.lv2[i].n2[j] > t2) t2 = gp_AA.lv2[i].n2[j];
+        }
+    }
+
+    for (i = 1; i < gp_AA.n; i++) {
+        for (j = 1; j < gp_AA.lv2[i].n; j++) {
+            gp_AA.lv2[i].b[j]->rule = (int *) calloc(t2, sizeof(int));
+            gp_AA.lv2[i].b[j]->rule2 = (int *) calloc(t2, sizeof(int));
+            gp_AA.lv2[i].b[j]->r = 0;
+            gp_AA.lv2[i].b[j]->r2 = 0;
+            gp_AA.lv2[i].b[j]->set = 0;
+            gp_AA.lv2[i].b[j]->BV = 0;
+        }
+    }
+
+    for (i = 1; i < gp_AA.n; i++) {
+        for (j = 0; j < gp_AA.lv2[i].r; j++) {
+            ruleID = gp_AA.lv2[i].rule[j];
+
+            l = table[ruleID].dstPort[0];
+            r = table[ruleID].dstPort[1];
+
+            for (k = 1; k < gp_AA.lv2[i].n; k++) {
+                if ( l <= gp_AA.lv2[i].endpoint[k]) break;
+            }
+
+            for (; k < gp_AA.lv2[i].n; k++) {
+
+                gp_AA.lv2[i].b[k]->rule[gp_AA.lv2[i].b[k]->r++] = ruleID;
+
+                if (gp_AA.lv2[i].endpoint[k] >= r) break;
+            }
+        }
+    }    // Finish level2
+
+    struct ENTRY *table3_A;
+    int table3_n = 0;
+    table3 = (struct ENTRY *) calloc(10000, sizeof(struct ENTRY));
+
+
+    for (i = 0; i < num_entry; i++) {
+        if (table[i].group != -1) continue;
+
+        for (j = 0; j < table3_n; j++) {
+            if (table[i].srcIP == table3[j].srcIP && table[i].srclen == table3[j].srclen \
+                    && table[i].dstIP == table3[j].dstIP && table[i].dstlen == table3[j].dstlen \
+                    && table[i].proto == table3[j].proto)
+            {
+                table[i].rule = j;
+                break;
+            }
+        }
+
+        if (j == table3_n) {
+            table[i].rule = j;
+            table3[j].srcIP = table[i].srcIP;
+            table3[j].srclen = table[i].srclen;
+            table3[j].dstIP = table[i].dstIP;
+            table3[j].dstlen = table[i].dstlen;
+            table3[j].proto = table[i].proto;
+
+            table3_n++;
+        }
+    }
+
+    t2 = 0;
+    for (i = 1; i < gp_AA.n; i++) {
+        for (j = 1; j < gp_AA.lv2[i].n; j++) {
+
+            for (k = 0; k < gp_AA.lv2[i].b[j]->r; k++) {
+                ruleID = gp_AA.lv2[i].b[j]->rule[k];
+
+                for (l = 0; l < gp_AA.lv2[i].b[j]->r2; l++) {
+                    if (gp_AA.lv2[i].b[j]->rule2[l] == table[ruleID].rule) break;
+                }
+
+                if ( l == gp_AA.lv2[i].b[j]->r2) {
+                    gp_AA.lv2[i].b[j]->rule2[gp_AA.lv2[i].b[j]->r2++] = table[ruleID].rule;
+                }
+
+                qsort(gp_AA.lv2[i].b[j]->rule2, gp_AA.lv2[i].b[j]->r2, sizeof(int), cmp_r);
+
+                if (gp_AA.lv2[i].b[j]->r2 > t2) t2 = gp_AA.lv2[i].b[j]->r2;
+            }
+        }
+    } // Finish New ID mapping
+
+    struct bucket *uni_A_bucket0[100000];
+    int uni_A_num0 = 0;
+
+    for (i = 0; i < 100000; i++) {
+        uni_A_bucket0[i] = NULL;
+    }
+
+    struct bucket *now;
+    for (i = 1; i < gp_AA.n; i++) {
+        if (gp_AA.n1[i] == 0) continue;
+
+        now = gp_AA.lv2[i].b0;
+        if (now->r == 0) continue;
+
+        for (j = 0; j < uni_A_num0; j++) {
+            if (now->r != uni_A_bucket0[j]->r) continue;
+
+            if (rule_check_exact(now->rule, uni_A_bucket0[j]->rule, now->r, now->r)) {
+                gp_AA.lv2[i].type = 0;
+                break;
+            }
+        }
+
+        if (j == uni_A_num0) {
+            uni_A_bucket0[uni_A_num0++] = now;
+            gp_AA.lv2[i].type = 1;
+        }
+    }// Finish level1 bucket share
+
+
+    struct bucket *uni_A_bucket[100000];
+    int uni_A_num = 0;
+
+    for (i = 0; i < 100000; i++) {
+        uni_A_bucket[i] = NULL;
+    }
+
+
+    for (i = 1; i < gp_AA.n; i++) {
+        for (j = 1; j < gp_AA.lv2[i].n; j++) {
+            now = gp_AA.lv2[i].b[j];
+
+            if (now->r == 0) continue;
+
+            for (k = 0; k < uni_A_num; k++) {
+                if (now->r != uni_A_bucket[k]->r) continue;
+
+                if (rule_check_exact(now->rule, uni_A_bucket[k]->rule, now->r, now->r)) {
+                    gp_AA.lv2[i].b_type[j] = 0;
+                    break;
+                }
+            }
+            if (k == uni_A_num) {
+                uni_A_bucket[uni_A_num++] = now;
+                gp_AA.lv2[i].b_type[j] = 1;
+            }
+        }
+    } // Finish level2 bucket share
+
+    struct bucket merge_A_bucket[20000];
+    int mrg_A_num = 0;
+
+    for (i = 0; i < 20000; i++) {
+        merge_A_bucket[i].rule = (int *) calloc(t2, sizeof(int));
+        merge_A_bucket[i].r = 0;
+    }
+
+    qsort(uni_A_bucket, uni_A_num, sizeof(struct bucekt *), cmp);
+
+    for (i = 0; i < uni_A_num; i++) {
+        now = uni_A_bucket[i];
+
+        for (j = 0; j < mrg_A_num; j++) {
+            r = rule_check_merge(now->rule2, merge_A_bucket[j].rule, now->r2, merge_A_bucket[j].r, t2);
+            if (r) {
+                merge_A_bucket[j].r = r;
+                now->mergeID = j;
+                break;
+            }
+        }
+
+        if (j == mrg_A_num) {
+            for (k = 0; k < now->r2; k++) {
+                merge_A_bucket[j].rule[k] = now->rule2[k];
+            }
+            merge_A_bucket[j].r = now->r2;
+
+            now->mergeID = j;
+            mrg_A_num++;
+        }
+    }// Finist merge
+
+    int bucket_size1[1087] = {0};
+    int bucket_size2[155] = {0};
+    int bucket_size3[87] = {0};
+    int *dim1_count = calloc(num_entry, sizeof(int));
+    int *dim2_count = calloc(num_entry, sizeof(int));
+    int *merge_count = calloc(num_entry, sizeof(int));
+
+    int **cnt = malloc(num_entry * sizeof(int *));
+    for (i = 0; i < num_entry; i++) {
+        cnt[i] = malloc(2048 * sizeof(int));
+
+        for (j = 0; j < 2048; j++) {
+            cnt[i][j] = -1;
+        }
+    }
+
+    int max1 = 0, max2 = 0, summ = 0;;
+    for (i = 1; i < gp_AA.n; i++) {
+        if (gp_AA.lv2[i].type != 1) continue;
+
+        //printf("Level 1, endpoint: %d\n", gp_AA.endpoint[i]);
+        for (j = 0; j < gp_AA.lv2[i].r; j++) {
+            ruleID = gp_AA.lv2[i].rule[j];
+            dim1_count[ruleID]++;
+            //printf("%d ", ruleID+1);
+        }
+        //printf("%d\n", gp_AA.lv2[i].r);
+
+        if(gp_AA.lv2[i].b0->r > max1) max1 = gp_AA.lv2[i].b0->r;
+        bucket_size1[gp_AA.lv2[i].b0->r]++;
+        printf("%d\n", gp_AA.lv2[i].b0->r);
+        //printf("%d\n", gp_AA.lv2[i].b0->r;);
+        summ += gp_AA.lv2[i].n;
+        for (j = 1; j < gp_AA.lv2[i].n; j++) {
+            if (gp_AA.lv2[i].b_type[j] != 1 ) continue;
+
+            //printf("Level 2, endpoint: %d\n", gp_AA.lv2[i].endpoint[j]);
+            for (k = 0; k < gp_AA.lv2[i].b[j]->r; k++) {
+                ruleID = gp_AA.lv2[i].b[j]->rule[k];
+                dim2_count[ruleID]++;
+                //printf("%d ", ruleID);
+
+                for (l = 0; l < merge_count[ruleID]; l++) {
+                    if (cnt[ruleID][l] == gp_AA.lv2[i].b[j]->mergeID) {
+                        break;
+                    }
+                }
+
+                if (l == merge_count[ruleID]) {
+                    cnt[ruleID][l] = gp_AA.lv2[i].b[j]->mergeID;
+                    if (merge_count[ruleID] == 2047) printf("alert!!\n");
+                    merge_count[ruleID]++;
+                }
+            }
+            //printf("%d\n", gp_AA.lv2[i].b[j]->r2);
+            //printf("%d\n", gp_AA.lv2[i].b[j]->r);
+            if(gp_AA.lv2[i].b[j]->r > max2) max2 = gp_AA.lv2[i].b[j]->r;
+            bucket_size2[gp_AA.lv2[i].b[j]->r]++;
+            bucket_size3[gp_AA.lv2[i].b[j]->r2]++;
+        }
+    }
+    printf("New ID Table, total, %d\n", table3_n);
+    printf("SrcIP, DstIP, protocol\n");
+    unsigned int ips[4];
+    for(i=0; i<table3_n; i++) {
+        for(j=0; j<table3[i].srclen; j++) {
+            printf("%u", (table3[i].srcIP & (1 << 31 - j)) > 0);
+        }
+        printf("*, ");
+
+        for(j=0; j<table3[i].dstlen; j++) {
+            printf("%u", (table3[i].dstIP & (1 << 31 - j)) > 0);
+        }
+        printf("*, ");
+
+
+        printf("%u\n", table3[i].proto);
+    }
+    printf("\n");
+
+    printf("bucket size distribution\n");
+    for(i=75; i<155; i++) {
+        printf("size %d, %d\n", i, bucket_size2[i]);
+    }
+    for(i=75; i<87; i++) {
+        printf("size %d, %d\n", i, bucket_size3[i]);
+    }
+
+    int max[3] = {0};
+    int dis[3][20] = {0};
+    double sum[3] = {0};
+    double avg[3] = {0};
+
+    for(i=0; i<num_entry; i++) {
+        if(table[i].group != -1) continue;
+
+        //printf("%d %d %d\n", dim1_count[i], dim2_count[i], merge_count[i]); 
+
+        dis[0][log_2(dim1_count[i])]++;
+        dis[1][log_2(dim2_count[i])]++;
+        dis[2][log_2(merge_count[i])]++;
+
+        sum[0] += dim1_count[i];
+        sum[1] += dim2_count[i];
+        sum[2] += merge_count[i];
+
+        if (dim1_count[i] > max[0]) max[0] = dim1_count[i];
+        if (dim2_count[i] > max[1]) max[1] = dim2_count[i];
+        if (merge_count[i] > max[2]) max[2] = merge_count[i];
+    }
+
+    for(i=0; i<3; i++) {
+        if(total > 0) 
+            avg[i] = sum[i] / total;
+    }
+
+    j = 0;
+    for(i=19; i>=0; i--) {
+        if (dis[0][i] > 0 || dis[1][i] > 0 || dis[2][i] > 0) {
+            j = i;
+            break;
+        }
+    }
+
+    printf("Rule Duplication\n");
+    printf(", total rules, %d\n", total);
+    printf(", after dim1, after dim2, after merge\n");
+
+    for(i=0; i<=j; i++) {
+        printf("%d~%d", 1 << i, (1 << i + 1) - 1);
+        printf(", %d, %d, %d\n", dis[0][i], dis[1][i], dis[2][i]);
+    }
+    printf(">=%d, 0, 0, 0\n", 1 << i);
+    printf("avg., %.2f, %.2f, %.2f\n", avg[0], avg[1], avg[2]);
+    printf("max, %d, %d, %d\n", max[0], max[1], max[2]);
+    printf("\n\n");
+
+
+    printf("total rules, %d\n", total);
+    printf("# of unique dim1 buckets, %d\n", uni_A_num0);
+    printf("# of unique dim2 buckets, %d\n", uni_A_num);
+    printf("# of merged buckets, %d\n", mrg_A_num);
+    printf("bucket size, %d\n", t2);
+    printf("\n\n");
+
+    int dim1_nodes[20] = {0};
+    int dim2_nodes[20] = {0};
+    int total1 = 0, total2;
+
+    for (i = 1; i < gp_AA.n; i++) {
+        if (gp_AA.lv2[i].n > 0)
+            total1++;
+        if (gp_AA.lv2[i].n > 1 && gp_AA.lv2[i].type == 1) {
+            total2 = gp_AA.lv2[i].n - 1;
+            if (gp_AA.lv2[i].endpoint[total2] == 0xFFFF && total2 > 1)
+                total2--;
+            layer_count(total2, dim2_nodes);
+        }
+    }
+    if (gp_AA.endpoint[total1] == 0xFFFF && total1 > 1)
+        total1--;
+
+    layer_count(total1, dim1_nodes);
+
+
+    j = 0;
+    for(i=19; i>=0; i--) {
+        if(dim1_nodes[i] > 0 || dim2_nodes[i] > 0) {
+            j = i;
+            break;
+        }
+    }
+
+    printf("Node Level\n");
+    total1 = 0;
+    total2 = 0;
+    for(i=0; i<=j; i++) {
+        printf("level %d, %d, %d\n", i, dim1_nodes[i], dim2_nodes[i]);
+        total1 += dim1_nodes[i];
+        total2 += dim2_nodes[i];
+    }
+    printf("total, %d, %d\n", total1, total2);
+
+    printf("\n\n");
+
+    int total_memory_bit = 0;
+    int bucket_ptr_bit = 0;
+    int dim1_node_ptr = 0;
+    int dim2_node_ptr = 0;
+
+    bucket_ptr_bit += uni_A_num * (ceil_log2(mrg_A_num) + t2);
+    total_memory_bit += bucket_ptr_bit;
+
+    int n1, n2;
+    for (i = 19; i >= 0; i--) {
+        if (dim1_nodes[i] > 0) {
+            n1 = i;
+            break;
+        }
+    }
+
+    for (i = 19; i >= 0; i--) {
+        if (dim2_nodes[i] > 0) {
+            n2 = i;
+            break;
+        }
+    }
+
+    for (i = 0; i < n1; i++) {
+        dim1_node_ptr += dim1_nodes[i] * (ceil_log2(dim1_nodes[i + 1]) + ceil_log2(uni_A_num0) + 16 + 2);
+    }
+    dim1_node_ptr += dim1_nodes[i] * (ceil_log2(uni_A_num0) + 16 + 2);
+    total_memory_bit += dim1_node_ptr;
+
+    for (i = 0; i < n2; i++) {
+        dim2_node_ptr += dim2_nodes[i] * (ceil_log2(dim2_nodes[i + 1]) + ceil_log2(uni_A_num) + 16 + 2);
+    }
+    dim2_node_ptr += dim2_nodes[i] * (ceil_log2(uni_A_num) + 16 + 2);
+    total_memory_bit += dim2_node_ptr;
+
+    printf("Memory Use\n");
+    printf("dim1 ptr, %d\n", dim1_node_ptr);
+    printf("dim2 ptr, %d\n", dim2_node_ptr);
+    printf("bucket ptr, %d\n", bucket_ptr_bit);
+    printf("total(bit), %d\n", total_memory_bit);
+    printf("total(byte), %.0f\n", (double)total_memory_bit / 8);
+    printf("avg(per rule), %.02f\n", ((double)total_memory_bit / 8) / total);
+
+    /*
+    for(i=0; i<num_entry; i++) {
+        if(table[i].group != -1) continue;
+
+        printf("%d ", i+1);
+        printf("%x/%d, ", table[i].srcIP, table[i].srclen);
+        printf("%x/%d, ", table[i].dstIP, table[i].dstlen);
+        printf("%d-%d, ", table[i].srcPort[0], table[i].srcPort[1]);
+        printf("%d-%d, ", table[i].dstPort[0], table[i].dstPort[1]);
+        printf("%d\n", table[i].proto);
+
+    }*/
+
+    return;
 }
 
 void first_level() {

@@ -7,17 +7,20 @@
 #include "global.h"
 
 int main(int argc, char *argv[]) {
-    set(argv[2]);
+    //set(argv[2]);
     //print_setting();
     set_table(argv[1]);
+    //group_AA();
+    analysis();
     /*show_prefix_length(-1);
     show_prefix_length(0);
     show_prefix_length(1);
     show_prefix_length(2);*/
-
-    pre_rebuild();
+    
+    /*
+    //pre_rebuild();
     groupping();
-    group_A();
+    //group_A();
     first_level();
     second_level();
     l1_bucket_share();
@@ -58,6 +61,6 @@ int main(int argc, char *argv[]) {
 
     printf("memory use\n");
     show_memory_use();
-    
+    */
     return 0;
 }
