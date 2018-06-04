@@ -64,12 +64,24 @@ void read_table(char *str, int n) {
 	table[n].dstPort[1] = atoi(buf);
 
 	str1 = (char *) strtok(NULL, tok);
+    //printf("%s\n", str1);
     if((str1[2] > 57 && str1[2] < 97) || (str1[3] > 57 && str1[3] < 97))
         printf("reading table error!\n");
     if(str1[3] > 57)
         table[n].proto = (str1[2] - 48) * 16 + (str1[3] - 87);
     else
         table[n].proto = (str1[2] - 48) * 16 + (str1[3] - 48);
+
+    str1 = (char *) strtok(NULL, tok);
+    if(str1[2] > 57)
+        table[n].protolen = (str1[2] - 55) * 16;
+    else
+        table[n].protolen = (str1[2] - 48) * 16;
+
+    if(str1[3] > 57)
+        table[n].protolen += str1[3] - 55;
+    else
+        table[n].protolen += str1[3] - 48;
     
     if(setting[table[n].group].change){
         ip = table[n].srcIP;

@@ -25,57 +25,108 @@ struct ENTRY *table3;
 void analysis() {
     struct ENTRY *table_1;
     struct ENTRY *table_2;
+    struct ENTRY *table_3;
+    struct ENTRY *table_4;
+    struct ENTRY *table_5;
+
 
     int i, j, k;
-    int N1 = 0;
-    int N2 = 0;
-    int NN1 = 0;
-    int NN2 = 0;
+    int N[5] = {0};
+    int NN[5] = {0};
     int total = 0;
 
-    table_1 = (struct ENTRY *) calloc(10000, sizeof(struct ENTRY));
-    table_2 = (struct ENTRY *) calloc(10000, sizeof(struct ENTRY));
+    table_1 = (struct ENTRY *) calloc(100000, sizeof(struct ENTRY));
 
     for(i=0; i<num_entry; i++) {
         if(table[i].group != -1) continue;
 
         total++;
 
+        if(table[i].srcIP == 0 && table[i].srclen == 0)
+            NN[0]++;
+
+        if(table[i].dstIP == 0 && table[i].dstlen == 0)
+            NN[1]++;
+
         if(table[i].srcPort[0] == 0 && table[i].srcPort[1] == 65535)
-            NN1++;
+            NN[2]++;
 
         if(table[i].dstPort[0] == 0 && table[i].dstPort[1] == 65535)
-            NN2++;
+            NN[3]++;
 
-        for(j=0; j<N1; j++) {
+        if(table[i].protolen == 0)
+            NN[4]++;
+
+        for(j=0; j<N[0]; j++) {
+            if(table[i].srcIP == table_1[j].srcIP && table[i].srclen == table_1[j].srclen) {
+                break;
+            }
+        }
+        if(j == N[0]) {
+            table_1[j].srcIP = table[i].srcIP;
+            table_1[j].srclen = table[i].srclen;
+
+            N[0]++;
+        }
+        for(j=0; j<N[1]; j++) {
+            if(table[i].dstIP == table_1[j].dstIP && table[i].dstlen == table_1[j].dstlen) {
+                break;
+            }
+        }
+        if(j == N[1]) {
+            table_1[j].dstIP = table[i].dstIP;
+            table_1[j].dstlen = table[i].dstlen;
+
+            N[1]++;
+        }
+        
+        for(j=0; j<N[2]; j++) {
             if(table[i].srcPort[0] == table_1[j].srcPort[0] && table[i].srcPort[1] == table_1[j].srcPort[1]) {
                 break;
             }
         }
-        if(j == N1) {
+        if(j == N[2]) {
             table_1[j].srcPort[0] = table[i].srcPort[0];
             table_1[j].srcPort[1] = table[i].srcPort[1];
 
-            N1++;
+            N[2]++;
         }
 
-        for(j=0; j<N2; j++) {
-            if(table[i].dstPort[0] == table_2[j].dstPort[0] && table[i].dstPort[1] == table_2[j].dstPort[1]) {
+        for(j=0; j<N[3]; j++) {
+            if(table[i].dstPort[0] == table_1[j].dstPort[0] && table[i].dstPort[1] == table_1[j].dstPort[1]) {
                 break;
             }
         }
-        if(j == N2) {
-            table_2[j].dstPort[0] = table[i].dstPort[0];
-            table_2[j].dstPort[1] = table[i].dstPort[1];
+        if(j == N[3]) {
+            table_1[j].dstPort[0] = table[i].dstPort[0];
+            table_1[j].dstPort[1] = table[i].dstPort[1];
 
-            N2++;
+            N[3]++;
+        }
+
+        for(j=0; j<N[4]; j++) {
+            if(table[i].proto == table_1[j].proto && table[i].protolen == table_1[j].protolen) {
+                break;
+            }
+        }
+        if(j == N[4]) {
+            table_1[j].proto = table[i].proto;
+            table_1[j].protolen = table[i].protolen;
+            N[4]++;
         }
     }
 
     printf("total, %d\n", total);
     printf("srcPort, dstPort\n");
-    printf("%d, %d\n", N1, N2);
-    printf("%d, %d\n", NN1, NN2);
+    for(i=0; i<5; i++) {
+        printf("%d, ", N[i]);
+    }
+    printf("\n");
+    for(i=0; i<5; i++) {
+        printf("%d, ", NN[i]);
+    }
+    printf("\n");
+    //printf("%d, %d\n", NN1, NN2);
 
     return;
 }

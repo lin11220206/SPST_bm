@@ -1,6 +1,6 @@
 struct ENTRY {
     unsigned int srcIP, dstIP;
-	unsigned char srclen, dstlen, proto;
+	unsigned char srclen, dstlen, proto, protolen;
 	unsigned short int srcPort[2], dstPort[2], type;
 	int rule, group, n;
 };
