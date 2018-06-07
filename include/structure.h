@@ -44,6 +44,7 @@ void convert();
 void l1_bucket_share();
 void l2_bucket_share();
 void bucket_merge();
+void rebuild_old();
 void rebuild();
 void pre_rebuild();
 int cmp(const void *, const void *);

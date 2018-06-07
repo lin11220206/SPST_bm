@@ -149,6 +149,95 @@ void pre_rebuild() {
     return;
 }
 
+void rebuild_old() {
+    int i, na, j, k, r;
+
+    //printf("start rebuild ...\n");
+    int *count = calloc(num_entry , sizeof(int));
+
+    for (i = 0; i < num_entry; i++)
+        count[i] = 0;
+
+    int ruleID, N;
+
+    for (i = 0; i < 6; i++) {
+        for (na = 0; na < 65536; na++) {
+            N = gp[i][na].n;
+            for (j = 1; j < N; j++) {
+                if (gp[i][na].lv2[j].type != 1) continue;
+
+                if (gp[i][na].lv2[j].b0->r > 1) {
+                    for (k = 1; k < gp[i][na].lv2[j].b0->r; k++) {
+                        count[gp[i][na].lv2[j].b0->rule[k]]++;
+                    }
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < num_entry; i++) {
+        if (count[i] > 0 && table[i].group < 3 && setting[table[i].group].rebuild) {
+            table[i].group += 3;
+        }
+    }
+    //reset all extra memory
+    /*
+    for (i = 0; i < 8; i++) {
+        for (na = 0; na < 65536; na++) {
+            N = gp[i][na].n;
+            for (j = 1; j < N; j++) {
+                for (k = 1; k < gp[i][na].lv2[j].n; k++) {
+                    free(gp[i][na].lv2[j].b[k]->rule);
+                    free(gp[i][na].lv2[j].b[k]->rule2);
+                }
+            }
+        }
+    }
+    for (i = 0; i < 8; i++) {
+        for (na = 0; na < 65536; na++) {
+            N = gp[i][na].n;
+            for (j = 0; j < N; j++) {
+                if (gp[i][na].n1[j] == 0) continue;
+
+                for (k = 0; k < (gp[i][na].n1[j] * 2 + 1); k++) {
+                    free(gp[i][na].lv2[j].b[k]);
+                }
+
+                free(gp[i][na].lv2[j].endpoint);
+                free(gp[i][na].lv2[j].n2);
+                free(gp[i][na].lv2[j].b);
+                free(gp[i][na].lv2[j].b_type);
+                free(gp[i][na].lv2[j].rule);
+
+
+            }
+        }
+    }
+    for (i = 0; i < 8; i++) {
+        for (na = 0; na < 65536; na++) {
+            free(gp[i][na].endpoint);
+            free(gp[i][na].lv2);
+            free(gp[i][na].n1);
+            free(gp[i][na].rule);
+
+            group[i][na] = 0;
+        }
+        groupp[i] = 0;
+    }*/
+
+    for (i = 0; i < 6; i++)
+        for (na = 0; na < 65536; na++)
+            group[i][na] = 0;
+
+    memset(thres2, 0, sizeof(int) * 6);
+    for (i = 0; i < 500000; i++) {
+        uni_dim1_bucket[i] = NULL;
+        uni_dim2_bucket[i] = NULL;
+    }
+    uni_num[0] = 0;
+    uni_num[1] = 0;
+}
+
 void rebuild() {
     int i, na, j, k, r;
 
@@ -980,7 +1069,7 @@ void first_level() {
                     ip = ip & (1 << 32 - seg_bit[i]) - 1;
                 }
 
-                if ( i >= 3) {
+                if ( i >= 3 && !setting[i-3].rebuild) {
                     ip = ip >> 32 - setting[i - 3].cut;
                     len = len + setting[i - 3].cut;
                 }
@@ -1007,7 +1096,7 @@ void first_level() {
                     ip = ip & (1 << 32 - seg_bit[i]) - 1;
                 }
 
-                if ( i >= 3) {
+                if ( i >= 3 && !setting[i-3].rebuild) {
                     ip = ip >> 32 - setting[i - 3].cut;
                     len = len + setting[i - 3].cut;
                 }
@@ -1076,7 +1165,7 @@ void second_level() {
                     ip = ip & (1 << 32 - seg_bit[i]) - 1;
                 }
 
-                if ( i >= 3) {
+                if ( i >= 3 && !setting[i-3].rebuild) {
                     ip = ip >> 32 - setting[i - 3].cut;
                     len = len + setting[i - 3].cut;
                 }
